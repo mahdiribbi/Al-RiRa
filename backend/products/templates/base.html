@@ -18,6 +18,7 @@
                     <span class="badge bg-danger">{{ cart_item_count }}</span>
                     {% endif %}
                 </a>
+                <a href="{% url 'my_orders' %}" class="btn btn-outline-light">My Orders</a>
                 <form method="post" action="{% url 'logout' %}" class="d-inline m-0">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-outline-light">Logout</button>

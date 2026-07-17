@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1 class="mb-4">আমার Orders</h1>
+
+{% if orders %}
+    {% for order in orders %}
+    <div class="card mb-3">
+        <div class="card-header d-flex justify-content-between">
+            <span><strong>Order #{{ order.id }}</strong> — {{ order.created_at|date:"d M Y, h:i A" }}</span>
+            <span class="badge bg-info">{{ order.get_status_display }}</span>
+        </div>
+        <div class="card-body">
+            <table class="table mb-2">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>দাম</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order.items.all %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>৳ {{ item.price }}</td>
+                        <td>৳ {{ item.total_price }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <p class="text-end fw-bold mb-0">মোট: ৳ {{ order.total_amount }}</p>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+<p>তোমার এখনো কোনো Order নেই।</p>
+{% endif %}
+
+{% endblock %}
