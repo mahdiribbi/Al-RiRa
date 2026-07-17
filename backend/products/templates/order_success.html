@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="text-center">
+    <h1 class="text-success">✅ Order Successful!</h1>
+    <p>তোমার Order নম্বর: <strong>#{{ order.id }}</strong></p>
+    <p>মোট: ৳ {{ order.total_amount }}</p>
+    <p>Status: {{ order.get_status_display }}</p>
+</div>
+
+<h3 class="mt-4">Order Details:</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>দাম</th>
+            <th>Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in order.items.all %}
+        <tr>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>৳ {{ item.price }}</td>
+            <td>৳ {{ item.total_price }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{% url 'home' %}" class="btn btn-primary">Continue Shopping</a>
+
+{% endblock %}
