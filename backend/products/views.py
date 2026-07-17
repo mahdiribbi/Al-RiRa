@@ -40,3 +40,25 @@ def cart_view(request):
     cart_items = cart.items.all()
     total = sum(item.total_price() for item in cart_items)
     return render(request, 'cart.html', {'cart_items': cart_items, 'total': total})
+
+@login_required
+def remove_from_cart(request, item_id):
+    cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
+    cart_item.delete()
+    return redirect('cart')
+
+@login_required
+def update_cart_quantity(request, item_id, action):
+    cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
+
+    if action == 'increase':
+        cart_item.quantity += 1
+        cart_item.save()
+    elif action == 'decrease':
+        cart_item.quantity -= 1
+        if cart_item.quantity <= 0:
+            cart_item.delete()
+        else:
+            cart_item.save()
+
+    return redirect('cart')
