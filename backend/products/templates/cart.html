@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1 class="mb-4">আমার Cart</h1>
+
+{% if cart_items %}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>দাম</th>
+            <th>Quantity</th>
+            <th>Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in cart_items %}
+        <tr>
+            <td>{{ item.product.name }}</td>
+            <td>৳ {{ item.product.price }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>৳ {{ item.total_price }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3 class="text-end">মোট: ৳ {{ total }}</h3>
+
+{% else %}
+<p>তোমার Cart খালি আছে।</p>
+{% endif %}
+
+{% endblock %}
