@@ -62,3 +62,7 @@ def update_cart_quantity(request, item_id, action):
             cart_item.save()
 
     return redirect('cart')
+
+def product_detail(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    return render(request, 'product_detail.html', {'product': product})

@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="row">
+    <div class="col-md-6">
+        {% if product.image %}
+        <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}">
+        {% else %}
+        <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 300px;">
+            No Image
+        </div>
+        {% endif %}
+    </div>
+    <div class="col-md-6">
+        <h1>{{ product.name }}</h1>
+        <p class="text-muted">{{ product.description }}</p>
+        <h3 class="fw-bold">৳ {{ product.price }}</h3>
+        <p>Stock: {{ product.stock }}</p>
+
+        {% if user.is_authenticated %}
+        <form method="post" action="{% url 'add_to_cart' product.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary btn-lg">Add to Cart</button>
+        </form>
+        {% else %}
+        <a href="{% url 'login' %}" class="btn btn-secondary btn-lg">Login to Add to Cart</a>
+        {% endif %}
+
+        <br><br>
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary">← সব Product দেখো</a>
+    </div>
+</div>
+
+{% endblock %}
