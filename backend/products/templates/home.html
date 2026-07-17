@@ -1,25 +1,37 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1 class="mb-4">আমাদের Products</h1>
+<div class="hero-section text-center text-white rounded-4 p-5 mb-5">
+    <h1 class="display-5 fw-bold">তোমার পছন্দের সবকিছু, এক জায়গায়</h1>
+    <p class="lead">সেরা দামে সেরা পণ্য — এখনই কেনাকাটা শুরু করো</p>
+</div>
+
+<h2 class="mb-4 fw-bold" style="color: var(--primary-color);">আমাদের Products</h2>
 
 <div class="row">
     {% for product in products %}
     <div class="col-md-4 mb-4">
         <div class="card h-100">
-            <div class="card-body">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" class="card-img-top" style="height: 220px; object-fit: cover; border-radius: 12px 12px 0 0;" alt="{{ product.name }}">
+            {% else %}
+            <div class="d-flex align-items-center justify-content-center bg-light" style="height: 220px; border-radius: 12px 12px 0 0;">
+                <span class="text-muted">ছবি নেই</span>
+            </div>
+            {% endif %}
+            <div class="card-body d-flex flex-column">
                 <h5 class="card-title">
                     <a href="{% url 'product_detail' product.id %}" class="text-decoration-none text-dark">{{ product.name }}</a>
                 </h5>
-                <p class="card-text">{{ product.description }}</p>
-                <p class="fw-bold">৳ {{ product.price }}</p>
+                <p class="card-text text-muted flex-grow-1">{{ product.description|truncatewords:12 }}</p>
+                <p class="fs-4 fw-bold mb-2" style="color: var(--accent-color);">৳ {{ product.price }}</p>
                 {% if user.is_authenticated %}
                 <form method="post" action="{% url 'add_to_cart' product.id %}">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-primary">Add to Cart</button>
+                    <button type="submit" class="btn btn-primary w-100">Add to Cart</button>
                 </form>
                 {% else %}
-                <a href="{% url 'login' %}" class="btn btn-secondary">Login to Add to Cart</a>
+                <a href="{% url 'login' %}" class="btn btn-secondary w-100">Login to Add to Cart</a>
                 {% endif %}
             </div>
         </div>
