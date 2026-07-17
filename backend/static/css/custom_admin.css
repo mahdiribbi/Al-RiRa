@@ -1,0 +1,13 @@
+.brand-image {
+    max-height: 20px;
+    width: auto;
+    object-fit: contain;
+}
+
+.login-logo img,
+.login-box img,
+.card-body img {
+    max-height: 360px;
+    width: auto;
+    object-fit: contain;
+}

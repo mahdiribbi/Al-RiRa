@@ -1,57 +1,63 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1 class="mb-4">আমার Cart</h1>
+<h2 class="mb-4 fw-bold" style="color: var(--primary-color);">🛍️ My Cart</h2>
 
 {% if cart_items %}
-<table class="table align-middle">
-    <thead>
-        <tr>
-            <th>Product</th>
-            <th>দাম</th>
-            <th>Quantity</th>
-            <th>Subtotal</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for item in cart_items %}
-        <tr>
-            <td>{{ item.product.name }}</td>
-            <td>৳ {{ item.product.price }}</td>
-            <td>
-                <div class="d-flex align-items-center gap-2">
-                    <form method="post" action="{% url 'update_cart_quantity' item.id 'decrease' %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-sm btn-outline-secondary">-</button>
-                    </form>
-                    <span>{{ item.quantity }}</span>
-                    <form method="post" action="{% url 'update_cart_quantity' item.id 'increase' %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-sm btn-outline-secondary">+</button>
-                    </form>
-                </div>
-            </td>
-            <td>৳ {{ item.total_price }}</td>
-            <td>
-                <form method="post" action="{% url 'remove_from_cart' item.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-sm btn-danger">Remove</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="card border-0 shadow-sm" style="border-radius: 16px;">
+    <div class="card-body p-4">
+        <table class="table align-middle mb-0">
+            <thead>
+                <tr class="text-muted" style="border-bottom: 2px solid #eee;">
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th class="text-center">Quantity</th>
+                    <th>Subtotal</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr>
+                    <td class="fw-semibold">{{ item.product.name }}</td>
+                    <td>৳ {{ item.product.price }}</td>
+                    <td>
+                        <div class="d-flex align-items-center justify-content-center gap-2">
+                            <form method="post" action="{% url 'update_cart_quantity' item.id 'decrease' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-secondary rounded-circle" style="width: 32px; height: 32px;">-</button>
+                            </form>
+                            <span class="fw-bold">{{ item.quantity }}</span>
+                            <form method="post" action="{% url 'update_cart_quantity' item.id 'increase' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-secondary rounded-circle" style="width: 32px; height: 32px;">+</button>
+                            </form>
+                        </div>
+                    </td>
+                    <td class="fw-bold" style="color: var(--accent-color);">৳ {{ item.total_price }}</td>
+                    <td>
+                        <form method="post" action="{% url 'remove_from_cart' item.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 
-<h3 class="text-end">মোট: ৳ {{ total }}</h3>
-
-<div class="text-end">
-    <a href="{% url 'checkout' %}" class="btn btn-success btn-lg">Checkout করো</a>
+<div class="d-flex justify-content-end align-items-center mt-4 gap-4">
+    <h4 class="mb-0">Total: <span class="fw-bold" style="color: var(--accent-color);">৳ {{ total }}</span></h4>
+    <a href="{% url 'checkout' %}" class="btn btn-primary btn-lg px-4">Checkout →</a>
 </div>
 
 {% else %}
-<p>তোমার Cart খালি আছে।</p>
+<div class="text-center py-5">
+    <h3 class="text-muted">🛒 Your cart is empty</h3>
+    <a href="{% url 'home' %}" class="btn btn-primary mt-3">Start Shopping</a>
+</div>
 {% endif %}
 
 {% endblock %}

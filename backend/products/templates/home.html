@@ -6,7 +6,7 @@
     <p class="lead">সেরা দামে সেরা পণ্য — এখনই কেনাকাটা শুরু করো</p>
 </div>
 
-<h2 class="mb-4 fw-bold" style="color: var(--primary-color);">আমাদের Products</h2>
+<h2 class="mb-4 fw-bold" style="color: var(--primary-color);">Our Products</h2>
 
 <div class="row">
     {% for product in products %}
@@ -16,7 +16,7 @@
             <img src="{{ product.image.url }}" class="card-img-top" style="height: 220px; object-fit: cover; border-radius: 12px 12px 0 0;" alt="{{ product.name }}">
             {% else %}
             <div class="d-flex align-items-center justify-content-center bg-light" style="height: 220px; border-radius: 12px 12px 0 0;">
-                <span class="text-muted">ছবি নেই</span>
+                <span class="text-muted">Image loading</span>
             </div>
             {% endif %}
             <div class="card-body d-flex flex-column">

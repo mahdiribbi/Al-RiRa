@@ -1,9 +1,262 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Sign Up</h2>
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Sign Up</button>
-</form>
+
+<div class="login-wrapper d-flex justify-content-center align-items-center">
+    <div class="login-card">
+        <a href="{% url 'home' %}" class="close-btn">✕</a>
+
+        <h2 class="login-title">Create your KHORGOSH account</h2>
+        <p class="login-subtitle">Join us and start shopping today</p>
+
+        {% if form.non_field_errors %}
+        <div class="alert-error">
+            {% for error in form.non_field_errors %}
+            <p class="mb-0">{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-group-custom">
+                <label for="id_username">Username</label>
+                <input type="text" name="username" id="id_username" class="form-control-custom" placeholder="Choose a username" required autofocus>
+                {% if form.username.errors %}
+                <p class="field-error">{{ form.username.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="form-group-custom">
+                <label for="id_password1">Password</label>
+                <div class="password-wrapper">
+                    <input type="password" name="password1" id="id_password1" class="form-control-custom" placeholder="Create a password" required>
+                    <span class="toggle-password" onclick="togglePassword('id_password1')">👁️</span>
+                </div>
+                {% if form.password1.errors %}
+                <p class="field-error">{{ form.password1.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="form-group-custom">
+                <label for="id_password2">Confirm Password</label>
+                <div class="password-wrapper">
+                    <input type="password" name="password2" id="id_password2" class="form-control-custom" placeholder="Re-enter your password" required>
+                    <span class="toggle-password" onclick="togglePassword('id_password2')">👁️</span>
+                </div>
+                {% if form.password2.errors %}
+                <p class="field-error">{{ form.password2.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="login-btn">Create Account</button>
+        </form>
+
+        <div class="divider"><span>OR</span></div>
+
+        <button type="button" class="social-btn google-btn">
+            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width="20">
+            Sign up with Google
+        </button>
+        <button type="button" class="social-btn facebook-btn">
+            <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="Facebook" width="20">
+            Sign up with Facebook
+        </button>
+
+        <p class="signup-text">Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+    </div>
+</div>
+
+<style>
+    .login-wrapper {
+        min-height: 75vh;
+    }
+
+    .login-card {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 40px 36px;
+        width: 100%;
+        max-width: 420px;
+        box-shadow: 0 10px 40px rgba(26, 35, 126, 0.15);
+        position: relative;
+        animation: slideUp 0.5s ease;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 18px;
+        right: 20px;
+        font-size: 20px;
+        color: #999;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .close-btn:hover {
+        color: var(--accent-color);
+    }
+
+    .login-title {
+        font-weight: 700;
+        font-size: 28px;
+        color: var(--primary-color);
+        margin-bottom: 4px;
+    }
+
+    .login-subtitle {
+        color: #888;
+        font-size: 14px;
+        margin-bottom: 24px;
+    }
+
+    .form-group-custom {
+        margin-bottom: 18px;
+    }
+
+    .form-group-custom label {
+        display: block;
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 6px;
+        color: #333;
+    }
+
+    .form-control-custom {
+        width: 100%;
+        padding: 12px 14px;
+        border: 2px solid #eee;
+        border-radius: 10px;
+        font-size: 15px;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .form-control-custom:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px rgba(255, 111, 0, 0.15);
+    }
+
+    .password-wrapper {
+        position: relative;
+    }
+
+    .toggle-password {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        font-size: 16px;
+        user-select: none;
+    }
+
+    .field-error {
+        color: #c0392b;
+        font-size: 13px;
+        margin-top: 4px;
+        margin-bottom: 0;
+    }
+
+    .login-btn {
+        width: 100%;
+        padding: 13px;
+        background: linear-gradient(90deg, #ff6f00, #ff8f00);
+        border: none;
+        border-radius: 10px;
+        color: white;
+        font-weight: 700;
+        font-size: 16px;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .login-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(255, 111, 0, 0.35);
+    }
+
+    .divider {
+        text-align: center;
+        margin: 24px 0;
+        position: relative;
+        color: #aaa;
+        font-size: 13px;
+    }
+
+    .divider::before, .divider::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        width: 40%;
+        height: 1px;
+        background: #eee;
+    }
+
+    .divider::before { left: 0; }
+    .divider::after { right: 0; }
+
+    .social-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 11px;
+        border: 2px solid #eee;
+        border-radius: 10px;
+        background: white;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+    }
+
+    .social-btn:hover {
+        background: #f9f9f9;
+    }
+
+    .signup-text {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 14px;
+        color: #666;
+    }
+
+    .signup-text a {
+        color: var(--accent-color);
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .alert-error {
+        background: #fdecea;
+        color: #c0392b;
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 14px;
+        margin-bottom: 16px;
+    }
+</style>
+
+<script>
+    function togglePassword(fieldId) {
+        const passwordField = document.getElementById(fieldId);
+        const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordField.setAttribute('type', type);
+    }
+</script>
+
 {% endblock %}

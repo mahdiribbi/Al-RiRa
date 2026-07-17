@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from .models import Product, Cart, CartItem, Order, OrderItem
@@ -22,6 +22,21 @@ def signup(request):
     return render(request, 'signup.html', {'form': form})
 
 
+def custom_login(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            if user.is_superuser:
+                return redirect('/admin/')
+            else:
+                return redirect('home')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'login.html', {'form': form})
+
+
 @login_required
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
@@ -34,6 +49,7 @@ def add_to_cart(request, product_id):
 
     return redirect('home')
 
+
 @login_required
 def cart_view(request):
     cart, created = Cart.objects.get_or_create(user=request.user)
@@ -41,11 +57,13 @@ def cart_view(request):
     total = sum(item.total_price() for item in cart_items)
     return render(request, 'cart.html', {'cart_items': cart_items, 'total': total})
 
+
 @login_required
 def remove_from_cart(request, item_id):
     cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
     cart_item.delete()
     return redirect('cart')
+
 
 @login_required
 def update_cart_quantity(request, item_id, action):
@@ -63,9 +81,11 @@ def update_cart_quantity(request, item_id, action):
 
     return redirect('cart')
 
+
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     return render(request, 'product_detail.html', {'product': product})
+
 
 @login_required
 def checkout(request):
@@ -91,10 +111,12 @@ def checkout(request):
 
     return redirect('order_success', order_id=order.id)
 
+
 @login_required
 def order_success(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
     return render(request, 'order_success.html', {'order': order})
+
 
 @login_required
 def my_orders(request):

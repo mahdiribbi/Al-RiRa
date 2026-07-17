@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -101,6 +102,18 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+JAZZMIN_SETTINGS = {
+    "site_title": "Al-RiRa Admin",
+    "site_header": "Al-RiRa",
+    "site_brand": "Al-RiRa",
+    "site_logo": "images/khorgosh.png",
+    "welcome_sign": "Al-RiRa Admin Panel এ স্বাগতম",
+    "copyright": "Al-RiRa",
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "custom_css": "css/custom_admin.css",
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
@@ -117,6 +130,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
 
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
