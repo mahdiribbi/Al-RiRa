@@ -1,0 +1,111 @@
+{% extends 'admin_base.html' %}
+{% block admin_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold admin-page-title">Manage Categories</h2>
+    <a href="{% url 'admin_category_add' %}" class="btn admin-add-btn">+ Add New Category</a>
+</div>
+
+<div class="admin-table-wrapper">
+    <table class="table align-middle mb-0">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Slug</th>
+                <th>Total Products</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category in categories %}
+            <tr>
+                <td class="fw-semibold">{{ category.name }}</td>
+                <td class="text-muted">{{ category.slug }}</td>
+                <td>{{ category.products.count }}</td>
+                <td>
+                    <a href="{% url 'admin_category_edit' category.id %}" class="btn btn-sm admin-edit-btn">Edit</a>
+                    <button type="button" class="btn btn-sm admin-delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal{{ category.id }}">Delete</button>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center py-4 text-muted">No categories yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .admin-page-title {
+        color: var(--primary-color);
+    }
+
+    .admin-add-btn {
+        background: linear-gradient(90deg, #ff6f00, #ff8f00);
+        color: white;
+        font-weight: 700;
+        border-radius: 10px;
+        padding: 10px 20px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .admin-add-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(255, 111, 0, 0.35);
+        color: white;
+    }
+
+    .admin-table-wrapper {
+        background: white;
+        border-radius: 16px;
+        padding: 10px 20px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    }
+
+    .admin-edit-btn {
+        background: #1a237e;
+        color: white;
+        border-radius: 8px;
+        font-weight: 600;
+        margin-right: 4px;
+    }
+
+    .admin-edit-btn:hover {
+        background: #283593;
+        color: white;
+    }
+
+    .admin-delete-btn {
+        background: #c62828;
+        color: white;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+
+    .admin-delete-btn:hover {
+        background: #b71c1c;
+        color: white;
+    }
+</style>
+
+{% endblock %}
+
+{% block modals %}
+{% for category in categories %}
+<div class="modal fade" id="deleteModal{{ category.id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 20px; border: none;">
+            <div class="modal-body text-center p-4">
+                <h4 class="fw-bold mb-2">Delete Category?</h4>
+                <p class="text-muted mb-4">Are you sure you want to delete "{{ category.name }}"? Products in this category will become uncategorized.</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+                    <a href="{% url 'admin_category_delete' category.id %}" class="btn btn-danger px-4">Yes, Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

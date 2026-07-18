@@ -348,3 +348,41 @@ def admin_product_delete(request, product_id):
     product.delete()
     messages.success(request, f"Product '{name}' deleted.")
     return redirect('admin_product_list')
+
+@admin_required
+def admin_category_list(request):
+    categories = Category.objects.all().order_by('name')
+    return render(request, 'admin_category_list.html', {'categories': categories})
+
+
+@admin_required
+def admin_category_add(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        Category.objects.create(name=name)
+        messages.success(request, f"Category '{name}' added successfully.")
+        return redirect('admin_category_list')
+
+    return render(request, 'admin_category_form.html', {'category': None})
+
+
+@admin_required
+def admin_category_edit(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+
+    if request.method == 'POST':
+        category.name = request.POST.get('name')
+        category.save()
+        messages.success(request, f"Category '{category.name}' updated successfully.")
+        return redirect('admin_category_list')
+
+    return render(request, 'admin_category_form.html', {'category': category})
+
+
+@admin_required
+def admin_category_delete(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    name = category.name
+    category.delete()
+    messages.success(request, f"Category '{name}' deleted.")
+    return redirect('admin_category_list')
