@@ -30,4 +30,6 @@ urlpatterns = [
     path('admin-dashboard/categories/add/', views.admin_category_add, name='admin_category_add'),
     path('admin-dashboard/categories/edit/<int:category_id>/', views.admin_category_edit, name='admin_category_edit'),
     path('admin-dashboard/categories/delete/<int:category_id>/', views.admin_category_delete, name='admin_category_delete'),
+    path('admin-dashboard/orders/', views.admin_all_orders, name='admin_all_orders'),
+    path('admin-dashboard/users/', views.admin_user_list, name='admin_user_list'),
 ]

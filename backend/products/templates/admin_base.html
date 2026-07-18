@@ -12,14 +12,14 @@
                 📦 Manage Products
             </a>
             <a href="{% url 'admin_category_list' %}" class="admin-nav-link {% if '/admin-dashboard/categories/' in request.path %}active{% endif %}">
-    🏷️               Manage Categories
+                🏷️ Manage Categories
             </a>
-            <a href="#" class="admin-nav-link admin-nav-disabled">
+            <a href="{% url 'admin_all_orders' %}" class="admin-nav-link {% if '/admin-dashboard/orders/' in request.path %}active{% endif %}">
                 🧾 All Orders
             </a>
-            <a href="#" class="admin-nav-link admin-nav-disabled">
+           <a href="{% url 'admin_user_list' %}" class="admin-nav-link {% if '/admin-dashboard/users/' in request.path %}active{% endif %}">
                 👥 Users
-            </a>
+           </a>
             <hr class="admin-nav-divider">
             <a href="{% url 'home' %}" class="admin-nav-link">
                 🏠 Visit Site

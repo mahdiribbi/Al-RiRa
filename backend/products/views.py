@@ -386,3 +386,32 @@ def admin_category_delete(request, category_id):
     category.delete()
     messages.success(request, f"Category '{name}' deleted.")
     return redirect('admin_category_list')
+
+@admin_required
+def admin_all_orders(request):
+    status_filter = request.GET.get('status')
+
+    orders = Order.objects.all().order_by('-created_at')
+
+    if status_filter:
+        orders = orders.filter(status=status_filter)
+
+    context = {
+        'orders': orders,
+        'selected_status': status_filter,
+    }
+    return render(request, 'admin_all_orders.html', context)
+
+@admin_required
+def admin_user_list(request):
+    users = User.objects.filter(is_superuser=False).order_by('-date_joined')
+
+    user_data = []
+    for user in users:
+        order_count = Order.objects.filter(user=user).count()
+        user_data.append({
+            'user': user,
+            'order_count': order_count,
+        })
+
+    return render(request, 'admin_user_list.html', {'user_data': user_data})
