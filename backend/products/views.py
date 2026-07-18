@@ -13,6 +13,7 @@ def home(request):
         product_list = Product.objects.all()
     return render(request, 'home.html', {'products': product_list})
 
+
 def signup(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -106,6 +107,7 @@ def checkout(request):
         OrderItem.objects.create(
             order=order,
             product=item.product,
+            product_name=item.product.name,
             quantity=item.quantity,
             price=item.product.price
         )
@@ -125,3 +127,15 @@ def order_success(request, order_id):
 def my_orders(request):
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'my_orders.html', {'orders': orders})
+
+
+def about_us(request):
+    return render(request, 'about_us.html')
+
+
+def privacy_policy(request):
+    return render(request, 'privacy_policy.html')
+
+
+def terms_conditions(request):
+    return render(request, 'terms_conditions.html')

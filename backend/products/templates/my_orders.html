@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h2 class="mb-4 fw-bold" style="color: var(--primary-color);">📦 আমার Orders</h2>
+<h2 class="mb-4 fw-bold" style="color: var(--primary-color);">📦 My Orders</h2>
 
 {% if orders %}
     {% for order in orders %}
@@ -26,14 +26,14 @@
                     <tr class="text-muted" style="border-bottom: 2px solid #eee;">
                         <th>Product</th>
                         <th class="text-center">Quantity</th>
-                        <th>দাম</th>
+                        <th>Price</th>
                         <th>Subtotal</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for item in order.items.all %}
                     <tr>
-                        <td class="fw-semibold">{{ item.product.name }}</td>
+                        <td class="fw-semibold">{{ item.product_name }}</td>
                         <td class="text-center">{{ item.quantity }}</td>
                         <td>৳ {{ item.price }}</td>
                         <td class="fw-bold" style="color: var(--accent-color);">৳ {{ item.total_price }}</td>
@@ -42,7 +42,7 @@
                 </tbody>
             </table>
             <div class="text-end">
-                <span class="text-muted">মোট: </span>
+                <span class="text-muted">Total: </span>
                 <span class="fs-5 fw-bold" style="color: var(--primary-color);">৳ {{ order.total_amount }}</span>
             </div>
         </div>
@@ -50,8 +50,8 @@
     {% endfor %}
 {% else %}
 <div class="text-center py-5">
-    <h3 class="text-muted">📭 তোমার এখনো কোনো Order নেই</h3>
-    <a href="{% url 'home' %}" class="btn btn-primary mt-3">Shopping শুরু করো</a>
+    <h3 class="text-muted">📭 You have no orders yet</h3>
+    <a href="{% url 'home' %}" class="btn btn-primary mt-3">Start Shopping</a>
 </div>
 {% endif %}
 

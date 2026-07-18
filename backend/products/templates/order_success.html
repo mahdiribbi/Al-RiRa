@@ -1,35 +1,85 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<div class="text-center">
-    <h1 class="text-success">✅ Order Successful!</h1>
-    <p>তোমার Order নম্বর: <strong>#{{ order.id }}</strong></p>
-    <p>মোট: ৳ {{ order.total_amount }}</p>
-    <p>Status: {{ order.get_status_display }}</p>
+<div class="success-card text-center mb-4">
+    <div class="success-icon">✅</div>
+    <h1 class="fw-bold text-success mb-2">Order Successful!</h1>
+    <p class="text-muted mb-0">Thank you for shopping with us</p>
 </div>
 
-<h3 class="mt-4">Order Details:</h3>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Product</th>
-            <th>Quantity</th>
-            <th>দাম</th>
-            <th>Subtotal</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for item in order.items.all %}
-        <tr>
-            <td>{{ item.product.name }}</td>
-            <td>{{ item.quantity }}</td>
-            <td>৳ {{ item.price }}</td>
-            <td>৳ {{ item.total_price }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="order-summary-card mb-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <span class="text-muted">Order Number</span>
+            <h4 class="fw-bold mb-0">#{{ order.id }}</h4>
+        </div>
+        <div>
+            <span class="text-muted">Status</span>
+            <h5 class="mb-0"><span class="status-badge">{{ order.get_status_display }}</span></h5>
+        </div>
+        <div>
+            <span class="text-muted">Total Amount</span>
+            <h4 class="fw-bold mb-0" style="color: var(--accent-color);">৳ {{ order.total_amount }}</h4>
+        </div>
+    </div>
+</div>
 
-<a href="{% url 'home' %}" class="btn btn-primary">Continue Shopping</a>
+<h4 class="mb-3 fw-bold" style="color: var(--primary-color);">Order Details</h4>
+
+<div class="card border-0 shadow-sm mb-4" style="border-radius: 16px;">
+    <div class="card-body p-4">
+        <table class="table align-middle mb-0">
+            <thead>
+                <tr class="text-muted" style="border-bottom: 2px solid #eee;">
+                    <th>Product</th>
+                    <th class="text-center">Quantity</th>
+                    <th>Price</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.items.all %}
+                <tr>
+                    <td class="fw-semibold">{{ item.product_name }}</td>
+                    <td class="text-center">{{ item.quantity }}</td>
+                    <td>৳ {{ item.price }}</td>
+                    <td class="fw-bold" style="color: var(--accent-color);">৳ {{ item.total_price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="text-center">
+    <a href="{% url 'home' %}" class="btn btn-primary btn-lg px-4">Continue Shopping</a>
+</div>
+
+<style>
+    .success-card {
+        padding: 40px 20px;
+    }
+
+    .success-icon {
+        font-size: 56px;
+        margin-bottom: 12px;
+    }
+
+    .order-summary-card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px 28px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .status-badge {
+        background-color: #fff3cd;
+        color: #856404;
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 700;
+    }
+</style>
 
 {% endblock %}

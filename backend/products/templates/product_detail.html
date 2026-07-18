@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<a href="{% url 'home' %}" class="btn btn-outline-secondary mb-4">← সব Product দেখো</a>
+<a href="{% url 'home' %}" class="btn btn-outline-secondary mb-4">← Back to All Products</a>
 
 <div class="card border-0 shadow-sm p-4" style="border-radius: 16px;">
     <div class="row g-4">
@@ -10,7 +10,7 @@
             <img src="{{ product.image.url }}" class="img-fluid rounded-4 w-100" style="object-fit: cover; max-height: 420px;" alt="{{ product.name }}">
             {% else %}
             <div class="d-flex align-items-center justify-content-center bg-light rounded-4" style="height: 420px;">
-                <span class="text-muted fs-5">Image Loading</span>
+                <span class="text-muted fs-5">No Image</span>
             </div>
             {% endif %}
         </div>
@@ -21,9 +21,9 @@
             <h2 class="fw-bold my-3" style="color: var(--accent-color);">৳ {{ product.price }}</h2>
 
             {% if product.stock > 0 %}
-            <span class="badge bg-success mb-3" style="width: fit-content;">✓ Stock Quantity ({{ product.stock }})</span>
+            <span class="badge bg-success mb-3" style="width: fit-content;">✓ In Stock ({{ product.stock }} available)</span>
             {% else %}
-            <span class="badge bg-danger mb-3" style="width: fit-content;">Stock শেষ</span>
+            <span class="badge bg-danger mb-3" style="width: fit-content;">Out of Stock</span>
             {% endif %}
 
             {% if user.is_authenticated %}

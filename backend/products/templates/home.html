@@ -8,14 +8,14 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="fw-bold mb-0" style="color: var(--primary-color);">Our Products</h2>
-    <span class="product-count">{{ products|length }} টি পণ্য পাওয়া যাচ্ছে</span>
+    <span class="product-count">{{ products|length }} product available</span>
 </div>
 
 <div class="row">
     {% for product in products %}
     <div class="col-md-4 mb-4">
         <div class="product-card h-100">
-            <div class="product-img-wrapper">
+            <a href="{% url 'product_detail' product.id %}" class="product-img-wrapper d-block">
                 {% if product.image %}
                 <img src="{{ product.image.url }}" class="product-img" alt="{{ product.name }}">
                 {% else %}
@@ -26,9 +26,9 @@
                 {% if product.stock <= 0 %}
                 <span class="stock-badge out">Stock নেই</span>
                 {% elif product.stock <= 5 %}
-                <span class="stock-badge low">মাত্র {{ product.stock }}টি বাকি</span>
+                <span class="stock-badge low">Only {{ product.stock }} Remaining</span>
                 {% endif %}
-            </div>
+            </a>
 
             <div class="product-body">
                 <h5 class="product-title">
@@ -46,10 +46,10 @@
                             <button type="submit" class="cart-btn">Add to Cart</button>
                         </form>
                         {% else %}
-                        <button class="cart-btn" disabled>Stock নেই</button>
+                        <button class="cart-btn" disabled>Stock out</button>
                         {% endif %}
                     {% else %}
-                    <a href="{% url 'login' %}" class="cart-btn login-btn">Login করো</a>
+                    <a href="{% url 'login' %}" class="cart-btn login-btn">Login </a>
                     {% endif %}
                 </div>
             </div>
@@ -57,7 +57,7 @@
     </div>
     {% empty %}
     <div class="col-12 text-center py-5">
-        <h4 class="text-muted">😕 এখনো কোনো Product যোগ করা হয়নি</h4>
+        <h4 class="text-muted">😕 No product added</h4>
     </div>
     {% endfor %}
 </div>
