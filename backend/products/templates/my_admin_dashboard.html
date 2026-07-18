@@ -1,0 +1,148 @@
+{% extends 'admin_base.html' %}
+{% block admin_content %}
+
+<h2 class="mb-4 fw-bold dashboard-title">📊 Admin Dashboard</h2>
+
+<div class="row g-4 mb-5">
+    <div class="col-md-3 col-6">
+        <div class="stat-card stat-orders">
+            <div class="stat-icon">📦</div>
+            <div class="stat-value">{{ total_orders }}</div>
+            <div class="stat-label">Total Orders</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card stat-pending">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-value">{{ pending_count }}</div>
+            <div class="stat-label">Pending Orders</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card stat-users">
+            <div class="stat-icon">👥</div>
+            <div class="stat-value">{{ total_users }}</div>
+            <div class="stat-label">Total Users</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card stat-revenue">
+            <div class="stat-icon">💰</div>
+            <div class="stat-value">৳ {{ total_revenue }}</div>
+            <div class="stat-label">Total Revenue</div>
+        </div>
+    </div>
+</div>
+
+<h4 class="fw-bold mb-3 dashboard-subtitle">⏳ Pending Orders</h4>
+
+{% if pending_orders %}
+<div class="table-responsive dashboard-table-wrapper">
+    <table class="table align-middle mb-0">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in pending_orders %}
+            <tr>
+                <td class="fw-semibold">#{{ order.id }}</td>
+                <td>{{ order.user.username }}</td>
+                <td>{{ order.created_at|date:"d M Y, h:i A" }}</td>
+                <td class="fw-bold" style="color: var(--accent-color);">৳ {{ order.total_amount }}</td>
+                <td><span class="status-badge status-pending">Pending</span></td>
+                <td>
+                    <a href="{% url 'update_order_status' order.id 'shipped' %}" class="btn btn-sm quick-action-btn">Mark Shipped</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="text-center py-5 dashboard-empty">
+    <h4 class="text-muted">🎉 No pending orders right now!</h4>
+</div>
+{% endif %}
+
+<style>
+    .dashboard-title, .dashboard-subtitle {
+        color: var(--primary-color);
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px 20px;
+        text-align: center;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        border-top: 4px solid transparent;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.14);
+    }
+
+    .stat-orders { border-top-color: #1a237e; }
+    .stat-pending { border-top-color: #ff6f00; }
+    .stat-users { border-top-color: #2e7d32; }
+    .stat-revenue { border-top-color: #c62828; }
+
+    .stat-icon {
+        font-size: 32px;
+        margin-bottom: 8px;
+    }
+
+    .stat-value {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--primary-color);
+    }
+
+    .stat-label {
+        font-size: 13.5px;
+        color: #888;
+        font-weight: 600;
+        margin-top: 4px;
+    }
+
+    .dashboard-table-wrapper {
+        background: white;
+        border-radius: 16px;
+        padding: 10px 20px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    }
+
+    .dashboard-empty {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    }
+
+    .quick-action-btn {
+        background: linear-gradient(90deg, #1a237e, #283593);
+        color: white;
+        font-weight: 600;
+        border-radius: 8px;
+        padding: 6px 14px;
+        font-size: 13px;
+        text-decoration: none;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .quick-action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 14px rgba(26, 35, 126, 0.3);
+        color: white;
+    }
+</style>
+
+{% endblock %}

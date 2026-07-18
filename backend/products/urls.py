@@ -19,4 +19,11 @@ urlpatterns = [
     path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
     path('terms-conditions/', views.terms_conditions, name='terms_conditions'),
     path('category/<slug:slug>/', views.category_detail, name='category_detail'),
+    path('cancel-order/<int:order_id>/', views.cancel_order, name='cancel_order'),
+    path('my-admin-dashboard/', views.my_admin_dashboard, name='my_admin_dashboard'),
+    path('update-order-status/<int:order_id>/<str:new_status>/', views.update_order_status, name='update_order_status'),
+    path('admin-dashboard/products/', views.admin_product_list, name='admin_product_list'),
+    path('admin-dashboard/products/add/', views.admin_product_add, name='admin_product_add'),
+    path('admin-dashboard/products/edit/<int:product_id>/', views.admin_product_edit, name='admin_product_edit'),
+    path('admin-dashboard/products/delete/<int:product_id>/', views.admin_product_delete, name='admin_product_delete'),
 ]

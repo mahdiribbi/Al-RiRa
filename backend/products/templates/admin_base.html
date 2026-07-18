@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <h6 class="admin-sidebar-title">Admin Panel</h6>
+        <nav class="admin-nav">
+            <a href="{% url 'my_admin_dashboard' %}" class="admin-nav-link {% if request.path == '/my-admin-dashboard/' %}active{% endif %}">
+                📊 Dashboard
+            </a>
+            <a href="{% url 'admin_product_list' %}" class="admin-nav-link {% if '/admin-dashboard/products/' in request.path %}active{% endif %}">
+                📦 Manage Products
+            </a>
+            <a href="#" class="admin-nav-link admin-nav-disabled">
+                🏷️ Manage Categories
+            </a>
+            <a href="#" class="admin-nav-link admin-nav-disabled">
+                🧾 All Orders
+            </a>
+            <a href="#" class="admin-nav-link admin-nav-disabled">
+                👥 Users
+            </a>
+            <hr class="admin-nav-divider">
+            <a href="{% url 'home' %}" class="admin-nav-link">
+                🏠 Visit Site
+            </a>
+        </nav>
+    </aside>
+
+    <div class="admin-main">
+        {% block admin_content %}
+        {% endblock %}
+    </div>
+</div>
+
+<style>
+    .admin-layout {
+        display: flex;
+        gap: 24px;
+        align-items: flex-start;
+    }
+
+    .admin-sidebar {
+        width: 240px;
+        flex-shrink: 0;
+        background: white;
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+        position: sticky;
+        top: 90px;
+    }
+
+    .admin-sidebar-title {
+        color: var(--primary-color);
+        font-weight: 800;
+        margin-bottom: 16px;
+        padding-left: 8px;
+    }
+
+    .admin-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .admin-nav-link {
+        display: block;
+        padding: 11px 14px;
+        border-radius: 10px;
+        color: #444;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14.5px;
+        transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .admin-nav-link:hover {
+        background: #f0f2f8;
+        color: var(--primary-color);
+    }
+
+    .admin-nav-link.active {
+        background: linear-gradient(90deg, #1a237e, #283593);
+        color: white;
+    }
+
+    .admin-nav-disabled {
+        color: #ccc;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    .admin-nav-divider {
+        margin: 10px 0;
+        border-color: #eee;
+    }
+
+    .admin-main {
+        flex: 1;
+        min-width: 0;
+    }
+
+    @media (max-width: 900px) {
+        .admin-layout {
+            flex-direction: column;
+        }
+
+        .admin-sidebar {
+            width: 100%;
+            position: static;
+        }
+    }
+</style>
+
+{% endblock %}

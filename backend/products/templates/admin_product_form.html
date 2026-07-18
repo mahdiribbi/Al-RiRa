@@ -1,0 +1,157 @@
+{% extends 'admin_base.html' %}
+{% block admin_content %}
+
+<div class="form-wrapper">
+    <div class="form-card">
+        <h2 class="fw-bold mb-1 form-title">
+            {% if product %}Edit Product{% else %}Add New Product{% endif %}
+        </h2>
+        <p class="text-muted mb-4">
+            {% if product %}Update the details below{% else %}Fill in the details to add a new product{% endif %}
+        </p>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label-custom">Product Name</label>
+                    <input type="text" name="name" class="form-control-custom" value="{{ product.name|default:'' }}" required>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label-custom">Category</label>
+                    <select name="category" class="form-control-custom">
+                        <option value="">-- No Category --</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if product and product.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label-custom">Description</label>
+                <textarea name="description" class="form-control-custom" rows="4" required>{{ product.description|default:'' }}</textarea>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label-custom">Price (৳)</label>
+                    <input type="number" step="0.01" name="price" class="form-control-custom" value="{{ product.price|default:'' }}" required>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label class="form-label-custom">Stock Quantity</label>
+                    <input type="number" name="stock" class="form-control-custom" value="{{ product.stock|default:'0' }}" required>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label class="form-label-custom">Product Image</label>
+                    <input type="file" name="image" class="form-control-custom">
+                </div>
+            </div>
+
+            {% if product and product.image %}
+            <div class="mb-3">
+                <label class="form-label-custom">Current Image</label>
+                <div>
+                    <img src="{{ product.image.url }}" class="current-image-preview" alt="{{ product.name }}">
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="d-flex gap-3 mt-4">
+                <button type="submit" class="form-submit-btn">
+                    {% if product %}Save Changes{% else %}Add Product{% endif %}
+                </button>
+                <a href="{% url 'admin_product_list' %}" class="form-cancel-btn">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .form-wrapper {
+        display: flex;
+        justify-content: center;
+        padding: 20px 0;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        padding: 36px;
+        width: 100%;
+        max-width: 720px;
+        box-shadow: 0 10px 40px rgba(26, 35, 126, 0.1);
+    }
+
+    .form-title {
+        color: var(--primary-color);
+    }
+
+    .form-label-custom {
+        display: block;
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 6px;
+        color: #333;
+    }
+
+    .form-control-custom {
+        width: 100%;
+        padding: 11px 14px;
+        border: 2px solid #eee;
+        border-radius: 10px;
+        font-size: 14.5px;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .form-control-custom:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px rgba(255, 111, 0, 0.15);
+    }
+
+    .current-image-preview {
+        max-width: 140px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-submit-btn {
+        background: linear-gradient(90deg, #ff6f00, #ff8f00);
+        color: white;
+        font-weight: 700;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 28px;
+        font-size: 15px;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .form-submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(255, 111, 0, 0.35);
+    }
+
+    .form-cancel-btn {
+        background: #eee;
+        color: #555;
+        font-weight: 600;
+        border-radius: 10px;
+        padding: 12px 28px;
+        font-size: 15px;
+        text-decoration: none;
+        transition: background 0.2s ease;
+    }
+
+    .form-cancel-btn:hover {
+        background: #e0e0e0;
+        color: #333;
+    }
+</style>
+
+{% endblock %}

@@ -3,11 +3,154 @@
     width: auto;
     object-fit: contain;
 }
-
 .login-logo img,
 .login-box img,
 .card-body img {
     max-height: 360px;
     width: auto;
     object-fit: contain;
+}
+
+/* ===== Khorgosh Admin Custom Theme ===== */
+
+:root {
+    --khorgosh-navy: #1a237e;
+    --khorgosh-navy-dark: #283593;
+    --khorgosh-orange: #ff6f00;
+}
+
+/* Page Load Fade Animation */
+.content-wrapper {
+    animation: adminFadeIn 0.4s ease-out;
+}
+
+@keyframes adminFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Sidebar Smooth Hover */
+.nav-sidebar .nav-link {
+    transition: background 0.2s ease, transform 0.2s ease;
+    border-radius: 8px;
+    margin: 2px 8px;
+}
+
+.nav-sidebar .nav-link:hover {
+    background: rgba(255, 111, 0, 0.15) !important;
+    transform: translateX(4px);
+}
+
+.nav-sidebar .nav-link.active {
+    background: linear-gradient(90deg, var(--khorgosh-orange), #ff8f00) !important;
+    box-shadow: 0 4px 10px rgba(255, 111, 0, 0.3);
+}
+
+/* Brand Logo Hover */
+.brand-link {
+    transition: background 0.3s ease;
+}
+
+.brand-image {
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+.brand-image:hover {
+    transform: rotate(15deg) scale(1.1);
+}
+
+/* Cards - Smooth Shadow + Hover Lift */
+.card {
+    border: none !important;
+    border-radius: 14px !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08) !important;
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+    overflow: hidden;
+}
+
+.card:hover {
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.14) !important;
+}
+
+.card-header {
+    background: linear-gradient(90deg, var(--khorgosh-navy), var(--khorgosh-navy-dark)) !important;
+    color: white !important;
+    border-radius: 14px 14px 0 0 !important;
+    font-weight: 700;
+}
+
+/* Buttons - Smooth Transitions */
+.btn {
+    border-radius: 8px !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    font-weight: 600;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
+
+.btn-warning {
+    background: linear-gradient(90deg, var(--khorgosh-orange), #ff8f00) !important;
+    border: none !important;
+    color: white !important;
+}
+
+/* Tables - Cleaner Look */
+.table thead th {
+    background: #f5f5fa;
+    border-bottom: 2px solid #e0e0ec !important;
+    font-weight: 700;
+    color: var(--khorgosh-navy);
+}
+
+.table tbody tr {
+    transition: background 0.2s ease;
+}
+
+.table tbody tr:hover {
+    background: rgba(255, 111, 0, 0.06) !important;
+}
+
+/* Top Navbar */
+.main-header.navbar {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Login Page Card */
+.login-box .card,
+.register-box .card {
+    border-radius: 20px !important;
+    box-shadow: 0 12px 40px rgba(26, 35, 126, 0.2) !important;
+    animation: adminFadeIn 0.5s ease-out;
+}
+
+/* Small Badges */
+.badge {
+    border-radius: 20px !important;
+    padding: 5px 12px !important;
+    font-weight: 600;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--khorgosh-navy);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f0f2f8;
 }

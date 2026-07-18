@@ -1,0 +1,171 @@
+{% extends 'admin_base.html' %}
+{% block admin_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold admin-page-title">Manage Products</h2>
+    <a href="{% url 'admin_product_add' %}" class="btn admin-add-btn">+ Add New Product</a>
+</div>
+
+<div class="admin-table-wrapper">
+    <table class="table align-middle mb-0">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" class="admin-thumb" alt="{{ product.name }}">
+                    {% else %}
+                    <div class="admin-thumb-placeholder">No Image</div>
+                    {% endif %}
+                </td>
+                <td class="fw-semibold">{{ product.name }}</td>
+                <td>{{ product.category.name|default:"—" }}</td>
+                <td class="fw-bold" style="color: var(--accent-color);">৳ {{ product.price }}</td>
+                <td>
+                    {% if product.stock <= 0 %}
+                    <span class="admin-badge admin-badge-danger">Out of Stock</span>
+                    {% elif product.stock <= 5 %}
+                    <span class="admin-badge admin-badge-warning">{{ product.stock }} left</span>
+                    {% else %}
+                    <span class="admin-badge admin-badge-success">{{ product.stock }} in stock</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'admin_product_edit' product.id %}" class="btn btn-sm admin-edit-btn">Edit</a>
+                    <button type="button" class="btn btn-sm admin-delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal{{ product.id }}">Delete</button>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center py-4 text-muted">No products yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .admin-page-title {
+        color: var(--primary-color);
+    }
+
+    .admin-add-btn {
+        background: linear-gradient(90deg, #ff6f00, #ff8f00);
+        color: white;
+        font-weight: 700;
+        border-radius: 10px;
+        padding: 10px 20px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .admin-add-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(255, 111, 0, 0.35);
+        color: white;
+    }
+
+    .admin-table-wrapper {
+        background: white;
+        border-radius: 16px;
+        padding: 10px 20px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    }
+
+    .admin-thumb {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+    .admin-thumb-placeholder {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f5f5f7;
+        border-radius: 10px;
+        font-size: 10px;
+        color: #999;
+        text-align: center;
+    }
+
+    .admin-badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .admin-badge-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .admin-badge-warning {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .admin-badge-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .admin-edit-btn {
+        background: #1a237e;
+        color: white;
+        border-radius: 8px;
+        font-weight: 600;
+        margin-right: 4px;
+    }
+
+    .admin-edit-btn:hover {
+        background: #283593;
+        color: white;
+    }
+
+    .admin-delete-btn {
+        background: #c62828;
+        color: white;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+
+    .admin-delete-btn:hover {
+        background: #b71c1c;
+        color: white;
+    }
+</style>
+
+{% endblock %}
+
+{% block modals %}
+{% for product in products %}
+<div class="modal fade" id="deleteModal{{ product.id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 20px; border: none;">
+            <div class="modal-body text-center p-4">
+                <h4 class="fw-bold mb-2">Delete Product?</h4>
+                <p class="text-muted mb-4">Are you sure you want to delete "{{ product.name }}"? This cannot be undone.</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+                    <a href="{% url 'admin_product_delete' product.id %}" class="btn btn-danger px-4">Yes, Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

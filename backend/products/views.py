@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.db.models import Sum
 from .models import Product, Cart, CartItem, Order, OrderItem, Category
 from django.contrib import messages
 
@@ -65,8 +67,15 @@ def custom_login(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
+
+            remember_me = request.POST.get('remember_me')
+            if remember_me:
+                request.session.set_expiry(1209600)
+            else:
+                request.session.set_expiry(0)
+
             if user.is_superuser:
-                return redirect('/admin/')
+                return redirect('my_admin_dashboard')
             else:
                 return redirect('home')
     else:
@@ -199,3 +208,143 @@ def category_detail(request, slug):
     category = get_object_or_404(Category, slug=slug)
     product_list = Product.objects.filter(category=category)
     return render(request, 'category_detail.html', {'category': category, 'products': product_list})
+
+
+@login_required
+def cancel_order(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+
+    if order.status != 'pending':
+        messages.error(request, "This order cannot be cancelled anymore.")
+        return redirect('my_orders')
+
+    for item in order.items.all():
+        if item.product:
+            item.product.stock += item.quantity
+            item.product.save()
+
+    order.status = 'cancelled'
+    order.save()
+
+    messages.success(request, f"Order #{order.id} has been cancelled.")
+    return redirect('my_orders')
+
+
+@login_required
+def my_admin_dashboard(request):
+    if not request.user.is_superuser:
+        messages.error(request, "You don't have permission to access this page.")
+        return redirect('home')
+
+    total_orders = Order.objects.count()
+    pending_orders = Order.objects.filter(status='pending').order_by('-created_at')
+    pending_count = pending_orders.count()
+    total_users = User.objects.filter(is_superuser=False).count()
+    total_products = Product.objects.count()
+    total_revenue = Order.objects.exclude(status='cancelled').aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+
+    context = {
+        'total_orders': total_orders,
+        'pending_orders': pending_orders,
+        'pending_count': pending_count,
+        'total_users': total_users,
+        'total_products': total_products,
+        'total_revenue': total_revenue,
+    }
+    return render(request, 'my_admin_dashboard.html', context)
+
+
+@login_required
+def update_order_status(request, order_id, new_status):
+    if not request.user.is_superuser:
+        messages.error(request, "You don't have permission to do this.")
+        return redirect('home')
+
+    order = get_object_or_404(Order, id=order_id)
+
+    if new_status in ['pending', 'shipped', 'delivered', 'cancelled']:
+        if new_status == 'cancelled' and order.status != 'cancelled':
+            for item in order.items.all():
+                if item.product:
+                    item.product.stock += item.quantity
+                    item.product.save()
+
+        order.status = new_status
+        order.save()
+        messages.success(request, f"Order #{order.id} status updated to {new_status.title()}.")
+
+    return redirect('my_admin_dashboard')
+
+
+def admin_required(view_func):
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated or not request.user.is_superuser:
+            messages.error(request, "You don't have permission to access this page.")
+            return redirect('home')
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+
+@admin_required
+def admin_product_list(request):
+    products = Product.objects.all().order_by('-created_at')
+    return render(request, 'admin_product_list.html', {'products': products})
+
+
+@admin_required
+def admin_product_add(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        description = request.POST.get('description')
+        price = request.POST.get('price')
+        stock = request.POST.get('stock')
+        category_id = request.POST.get('category')
+        image = request.FILES.get('image')
+
+        category = Category.objects.get(id=category_id) if category_id else None
+
+        Product.objects.create(
+            name=name,
+            description=description,
+            price=price,
+            stock=stock,
+            category=category,
+            image=image
+        )
+        messages.success(request, f"Product '{name}' added successfully.")
+        return redirect('admin_product_list')
+
+    categories = Category.objects.all()
+    return render(request, 'admin_product_form.html', {'categories': categories, 'product': None})
+
+
+@admin_required
+def admin_product_edit(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+
+    if request.method == 'POST':
+        product.name = request.POST.get('name')
+        product.description = request.POST.get('description')
+        product.price = request.POST.get('price')
+        product.stock = request.POST.get('stock')
+        category_id = request.POST.get('category')
+        product.category = Category.objects.get(id=category_id) if category_id else None
+
+        if request.FILES.get('image'):
+            product.image = request.FILES.get('image')
+
+        product.save()
+        messages.success(request, f"Product '{product.name}' updated successfully.")
+        return redirect('admin_product_list')
+
+    categories = Category.objects.all()
+    return render(request, 'admin_product_form.html', {'categories': categories, 'product': product})
+
+
+@admin_required
+def admin_product_delete(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    name = product.name
+    product.delete()
+    messages.success(request, f"Product '{name}' deleted.")
+    return redirect('admin_product_list')
