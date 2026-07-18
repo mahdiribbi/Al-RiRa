@@ -6,9 +6,12 @@ from .models import Product, Cart, CartItem, Order, OrderItem
 
 
 def home(request):
-    product_list = Product.objects.all()
+    query = request.GET.get('q')
+    if query:
+        product_list = Product.objects.filter(name__icontains=query)
+    else:
+        product_list = Product.objects.all()
     return render(request, 'home.html', {'products': product_list})
-
 
 def signup(request):
     if request.method == 'POST':

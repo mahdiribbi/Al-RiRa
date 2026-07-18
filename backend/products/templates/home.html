@@ -2,41 +2,203 @@
 {% block content %}
 
 <div class="hero-section text-center text-white rounded-4 p-5 mb-5">
-    <h1 class="display-5 fw-bold">তোমার পছন্দের সবকিছু, এক জায়গায়</h1>
-    <p class="lead">সেরা দামে সেরা পণ্য — এখনই কেনাকাটা শুরু করো</p>
+    <h1 class="display-5 fw-bold">Gentle care for your little one.</h1>
+    <p class="lead mb-0">Best Price, Best Care. Start Shopping Today! ⭐</p>
 </div>
 
-<h2 class="mb-4 fw-bold" style="color: var(--primary-color);">Our Products</h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0" style="color: var(--primary-color);">Our Products</h2>
+    <span class="product-count">{{ products|length }} টি পণ্য পাওয়া যাচ্ছে</span>
+</div>
 
 <div class="row">
     {% for product in products %}
     <div class="col-md-4 mb-4">
-        <div class="card h-100">
-            {% if product.image %}
-            <img src="{{ product.image.url }}" class="card-img-top" style="height: 220px; object-fit: cover; border-radius: 12px 12px 0 0;" alt="{{ product.name }}">
-            {% else %}
-            <div class="d-flex align-items-center justify-content-center bg-light" style="height: 220px; border-radius: 12px 12px 0 0;">
-                <span class="text-muted">Image loading</span>
-            </div>
-            {% endif %}
-            <div class="card-body d-flex flex-column">
-                <h5 class="card-title">
-                    <a href="{% url 'product_detail' product.id %}" class="text-decoration-none text-dark">{{ product.name }}</a>
-                </h5>
-                <p class="card-text text-muted flex-grow-1">{{ product.description|truncatewords:12 }}</p>
-                <p class="fs-4 fw-bold mb-2" style="color: var(--accent-color);">৳ {{ product.price }}</p>
-                {% if user.is_authenticated %}
-                <form method="post" action="{% url 'add_to_cart' product.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-primary w-100">Add to Cart</button>
-                </form>
+        <div class="product-card h-100">
+            <div class="product-img-wrapper">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" class="product-img" alt="{{ product.name }}">
                 {% else %}
-                <a href="{% url 'login' %}" class="btn btn-secondary w-100">Login to Add to Cart</a>
+                <div class="product-img-placeholder">
+                    <span>📦</span>
+                </div>
                 {% endif %}
+                {% if product.stock <= 0 %}
+                <span class="stock-badge out">Stock নেই</span>
+                {% elif product.stock <= 5 %}
+                <span class="stock-badge low">মাত্র {{ product.stock }}টি বাকি</span>
+                {% endif %}
+            </div>
+
+            <div class="product-body">
+                <h5 class="product-title">
+                    <a href="{% url 'product_detail' product.id %}">{{ product.name }}</a>
+                </h5>
+                <p class="product-desc">{{ product.description|truncatewords:12 }}</p>
+
+                <div class="product-footer">
+                    <span class="product-price">৳ {{ product.price }}</span>
+
+                    {% if user.is_authenticated %}
+                        {% if product.stock > 0 %}
+                        <form method="post" action="{% url 'add_to_cart' product.id %}" class="m-0">
+                            {% csrf_token %}
+                            <button type="submit" class="cart-btn">Add to Cart</button>
+                        </form>
+                        {% else %}
+                        <button class="cart-btn" disabled>Stock নেই</button>
+                        {% endif %}
+                    {% else %}
+                    <a href="{% url 'login' %}" class="cart-btn login-btn">Login করো</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+        <h4 class="text-muted">😕 এখনো কোনো Product যোগ করা হয়নি</h4>
+    </div>
     {% endfor %}
 </div>
+
+<style>
+    .product-count {
+        color: #888;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .product-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .product-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+    }
+
+    .product-img-wrapper {
+        position: relative;
+        height: 220px;
+        background: #f5f5f7;
+    }
+
+    .product-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .product-img-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 42px;
+        opacity: 0.4;
+    }
+
+    .stock-badge {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .stock-badge.low {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .stock-badge.out {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .product-body {
+        padding: 18px 20px;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+
+    .product-title {
+        font-size: 17px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .product-title a {
+        color: #1a1a2e;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .product-title a:hover {
+        color: var(--accent-color);
+    }
+
+    .product-desc {
+        color: #888;
+        font-size: 13.5px;
+        flex-grow: 1;
+        margin-bottom: 14px;
+        line-height: 1.5;
+    }
+
+    .product-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .product-price {
+        font-size: 19px;
+        font-weight: 800;
+        color: var(--accent-color);
+        white-space: nowrap;
+    }
+
+    .cart-btn {
+        border: none;
+        background: linear-gradient(90deg, #ff6f00, #ff8f00);
+        color: white;
+        font-weight: 700;
+        font-size: 13.5px;
+        padding: 9px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .cart-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(255, 111, 0, 0.35);
+        color: white;
+    }
+
+    .cart-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+
+    .login-btn {
+        background: linear-gradient(90deg, #1a237e, #283593);
+    }
+</style>
 
 {% endblock %}
