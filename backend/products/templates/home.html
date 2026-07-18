@@ -6,60 +6,105 @@
     <p class="lead mb-0">Best Price, Best Care. Start Shopping Today! ⭐</p>
 </div>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="fw-bold mb-0" style="color: var(--primary-color);">Our Products</h2>
-    <span class="product-count">{{ products|length }} product available</span>
-</div>
-
 <div class="row">
-    {% for product in products %}
-    <div class="col-md-4 mb-4">
-        <div class="product-card h-100">
-            <a href="{% url 'product_detail' product.id %}" class="product-img-wrapper d-block">
-                {% if product.image %}
-                <img src="{{ product.image.url }}" class="product-img" alt="{{ product.name }}">
-                {% else %}
-                <div class="product-img-placeholder">
-                    <span>📦</span>
-                </div>
+    <div class="col-lg-3 mb-4">
+        <div class="filter-card">
+            <h5 class="filter-title">Filters</h5>
+            <form method="get" action="{% url 'home' %}">
+                {% if request.GET.q %}
+                <input type="hidden" name="q" value="{{ request.GET.q }}">
                 {% endif %}
-                {% if product.stock <= 0 %}
-                <span class="stock-badge out">Stock নেই</span>
-                {% elif product.stock <= 5 %}
-                <span class="stock-badge low">Only {{ product.stock }} Remaining</span>
-                {% endif %}
-            </a>
 
-            <div class="product-body">
-                <h5 class="product-title">
-                    <a href="{% url 'product_detail' product.id %}">{{ product.name }}</a>
-                </h5>
-                <p class="product-desc">{{ product.description|truncatewords:12 }}</p>
+                <label class="filter-label">Category</label>
+                <select name="category" class="form-select mb-3" onchange="this.form.submit()">
+                    <option value="">All Categories</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.slug }}" {% if selected_category == cat.slug %}selected{% endif %}>{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
 
-                <div class="product-footer">
-                    <span class="product-price">৳ {{ product.price }}</span>
-
-                    {% if user.is_authenticated %}
-                        {% if product.stock > 0 %}
-                        <form method="post" action="{% url 'add_to_cart' product.id %}" class="m-0">
-                            {% csrf_token %}
-                            <button type="submit" class="cart-btn">Add to Cart</button>
-                        </form>
-                        {% else %}
-                        <button class="cart-btn" disabled>Stock out</button>
-                        {% endif %}
-                    {% else %}
-                    <a href="{% url 'login' %}" class="cart-btn login-btn">Login </a>
-                    {% endif %}
+                <label class="filter-label">Price Range</label>
+                <div class="d-flex gap-2 mb-3">
+                    <input type="number" name="min_price" class="form-control" placeholder="Min" value="{{ min_price|default:'' }}">
+                    <input type="number" name="max_price" class="form-control" placeholder="Max" value="{{ max_price|default:'' }}">
                 </div>
-            </div>
+
+                <label class="filter-label">Sort By</label>
+                <select name="sort" class="form-select mb-3" onchange="this.form.submit()">
+                    <option value="">Default</option>
+                    <option value="price_asc" {% if selected_sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                    <option value="price_desc" {% if selected_sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+                    <option value="newest" {% if selected_sort == 'newest' %}selected{% endif %}>Newest First</option>
+                </select>
+
+                <button type="submit" class="btn btn-primary w-100 mb-2">Apply Filters</button>
+                <a href="{% url 'home' %}" class="btn btn-outline-secondary w-100">Clear All</a>
+            </form>
         </div>
     </div>
-    {% empty %}
-    <div class="col-12 text-center py-5">
-        <h4 class="text-muted">😕 No product added</h4>
+
+    <div class="col-lg-9">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold mb-0" style="color: var(--primary-color);">Our Products</h2>
+            <span class="product-count">{{ products|length }} product available</span>
+        </div>
+
+        <div class="row">
+            {% for product in products %}
+            <div class="col-md-6 col-xl-4 mb-4">
+                <div class="product-card h-100">
+                    <a href="{% url 'product_detail' product.id %}" class="product-img-wrapper d-block">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" class="product-img" alt="{{ product.name }}">
+                        {% else %}
+                        <div class="product-img-placeholder">
+                            <span>📦</span>
+                        </div>
+                        {% endif %}
+                        {% if product.stock <= 0 %}
+                        <span class="stock-badge out">Out of Stock</span>
+                        {% elif product.stock <= 5 %}
+                        <span class="stock-badge low">Only {{ product.stock }} Remaining</span>
+                        {% endif %}
+                    </a>
+
+                    <div class="product-body">
+                        <h5 class="product-title">
+                            <a href="{% url 'product_detail' product.id %}">{{ product.name }}</a>
+                        </h5>
+                        <p class="product-desc">{{ product.description|truncatewords:12 }}</p>
+
+                        <div class="product-footer">
+                            <span class="product-price">৳ {{ product.price }}</span>
+
+                            {% if user.is_authenticated %}
+                                {% if product.stock > 0 %}
+                                <form method="post" action="{% url 'add_to_cart' product.id %}" class="m-0">
+                                    {% csrf_token %}
+                                    <button type="submit" class="cart-btn">Add to Cart</button>
+                                </form>
+                                {% else %}
+                                <button class="cart-btn" disabled>Out of Stock</button>
+                                {% endif %}
+                            {% else %}
+                            <a href="{% url 'login' %}" class="cart-btn login-btn">Login</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="empty-state">
+                    <div class="empty-state-icon">🔍</div>
+                    <h4 class="text-muted">No products found</h4>
+                    <p class="text-muted">Try adjusting your filters or search terms</p>
+                    <a href="{% url 'home' %}" class="btn btn-primary mt-2">Clear Filters</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
     </div>
-    {% endfor %}
 </div>
 
 <style>
@@ -67,6 +112,42 @@
         color: #888;
         font-size: 14px;
         font-weight: 600;
+    }
+
+    .filter-card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        position: sticky;
+        top: 20px;
+    }
+
+    .filter-title {
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 18px;
+    }
+
+    .filter-label {
+        font-size: 13px;
+        font-weight: 700;
+        color: #555;
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 16px;
+    }
+
+    .empty-state-icon {
+        font-size: 48px;
+        margin-bottom: 12px;
+        opacity: 0.6;
     }
 
     .product-card {

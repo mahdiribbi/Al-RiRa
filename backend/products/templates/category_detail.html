@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2 class="mb-4 fw-bold" style="color: var(--primary-color);">{{ category.name }}</h2>
+
+<div class="row">
+    {% for product in products %}
+    <div class="col-md-4 mb-4">
+        <div class="product-card h-100">
+            <div class="product-img-wrapper">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" class="product-img" alt="{{ product.name }}">
+                {% else %}
+                <div class="product-img-placeholder">
+                    <span>📦</span>
+                </div>
+                {% endif %}
+            </div>
+            <div class="product-body">
+                <h5 class="product-title">
+                    <a href="{% url 'product_detail' product.id %}">{{ product.name }}</a>
+                </h5>
+                <p class="product-desc">{{ product.description|truncatewords:12 }}</p>
+                <div class="product-footer">
+                    <span class="product-price">৳ {{ product.price }}</span>
+                    {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'add_to_cart' product.id %}" class="m-0">
+                        {% csrf_token %}
+                        <button type="submit" class="cart-btn">Add to Cart</button>
+                    </form>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="cart-btn login-btn">Login to Add</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+        <h4 class="text-muted">😕 No products found in this category yet</h4>
+    </div>
+    {% endfor %}
+</div>
+
+
+
+{% endblock %}
