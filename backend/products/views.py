@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
+from django.contrib.auth import login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Sum
@@ -435,3 +435,28 @@ def admin_user_list(request):
         })
 
     return render(request, 'admin_user_list.html', {'user_data': user_data})
+
+
+@login_required
+def profile_edit(request):
+    if request.method == 'POST':
+        if 'update_info' in request.POST:
+            request.user.first_name = request.POST.get('first_name', '')
+            request.user.email = request.POST.get('email', '')
+            request.user.save()
+            messages.success(request, "Your profile information has been updated.")
+            return redirect('profile_edit')
+
+        elif 'change_password' in request.POST:
+            password_form = PasswordChangeForm(request.user, request.POST)
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, "Your password has been changed successfully.")
+                return redirect('profile_edit')
+            else:
+                for error in password_form.errors.values():
+                    messages.error(request, error.as_text())
+                return redirect('profile_edit')
+
+    return render(request, 'profile_edit.html')

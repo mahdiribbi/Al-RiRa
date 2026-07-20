@@ -337,11 +337,12 @@
                 {% else %}
                     <a href="{% url 'cart' %}" class="btn btn-outline-light position-relative">
                         Cart
-                        {% if cart_item_count > 0 %}
+                         {% if cart_item_count > 0 %}
                         <span class="badge bg-danger">{{ cart_item_count }}</span>
                         {% endif %}
-                    </a>
-                    <a href="{% url 'my_orders' %}" class="btn btn-outline-light">My Orders</a>
+                     </a>
+                      <a href="{% url 'my_orders' %}" class="btn btn-outline-light">My Orders</a>
+                     <a href="{% url 'profile_edit' %}" class="btn btn-outline-light">🪪 Profile</a>
                 {% endif %}
                 <form method="post" action="{% url 'logout' %}" class="d-inline m-0" id="logout-form">
                     {% csrf_token %}
