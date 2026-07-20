@@ -34,6 +34,11 @@
     </div>
 </div>
 
+<div class="chart-card mb-5">
+    <h4 class="fw-bold mb-3 dashboard-subtitle">📈 Revenue — Last 7 Days</h4>
+    <canvas id="revenueChart" height="80"></canvas>
+</div>
+
 <h4 class="fw-bold mb-3 dashboard-subtitle">⏳ Pending Orders</h4>
 
 {% if pending_orders %}
@@ -114,6 +119,13 @@
         margin-top: 4px;
     }
 
+    .chart-card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    }
+
     .dashboard-table-wrapper {
         background: white;
         border-radius: 16px;
@@ -144,5 +156,44 @@
         color: white;
     }
 </style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ chart_labels|safe }},
+            datasets: [{
+                label: 'Revenue (৳)',
+                data: {{ chart_data|safe }},
+                borderColor: '#ff6f00',
+                backgroundColor: 'rgba(255, 111, 0, 0.1)',
+                borderWidth: 3,
+                tension: 0.35,
+                fill: true,
+                pointBackgroundColor: '#1a237e',
+                pointRadius: 5,
+                pointHoverRadius: 7,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '৳ ' + value;
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
 
 {% endblock %}

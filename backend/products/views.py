@@ -4,6 +4,8 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Sum
+from django.utils import timezone
+from datetime import timedelta
 from .models import Product, Cart, CartItem, Order, OrderItem, Category
 from django.contrib import messages
 
@@ -243,6 +245,19 @@ def my_admin_dashboard(request):
     total_products = Product.objects.count()
     total_revenue = Order.objects.exclude(status='cancelled').aggregate(Sum('total_amount'))['total_amount__sum'] or 0
 
+    chart_labels = []
+    chart_data = []
+    today = timezone.now().date()
+
+    for i in range(6, -1, -1):
+        day = today - timedelta(days=i)
+        day_revenue = Order.objects.filter(
+            created_at__date=day
+        ).exclude(status='cancelled').aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+
+        chart_labels.append(day.strftime('%d %b'))
+        chart_data.append(float(day_revenue))
+
     context = {
         'total_orders': total_orders,
         'pending_orders': pending_orders,
@@ -250,6 +265,8 @@ def my_admin_dashboard(request):
         'total_users': total_users,
         'total_products': total_products,
         'total_revenue': total_revenue,
+        'chart_labels': chart_labels,
+        'chart_data': chart_data,
     }
     return render(request, 'my_admin_dashboard.html', context)
 
@@ -349,6 +366,7 @@ def admin_product_delete(request, product_id):
     messages.success(request, f"Product '{name}' deleted.")
     return redirect('admin_product_list')
 
+
 @admin_required
 def admin_category_list(request):
     categories = Category.objects.all().order_by('name')
@@ -387,6 +405,7 @@ def admin_category_delete(request, category_id):
     messages.success(request, f"Category '{name}' deleted.")
     return redirect('admin_category_list')
 
+
 @admin_required
 def admin_all_orders(request):
     status_filter = request.GET.get('status')
@@ -401,6 +420,7 @@ def admin_all_orders(request):
         'selected_status': status_filter,
     }
     return render(request, 'admin_all_orders.html', context)
+
 
 @admin_required
 def admin_user_list(request):
