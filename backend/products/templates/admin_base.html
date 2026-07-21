@@ -24,6 +24,9 @@
             <a href="{% url 'home' %}" class="admin-nav-link">
                 🏠 Visit Site
             </a>
+            <a href="{% url 'admin_contact_messages' %}" class="admin-nav-link {% if '/admin-dashboard/messages/' in request.path %}active{% endif %}">
+                ✉️ Messages
+            </a>
         </nav>
     </aside>
 

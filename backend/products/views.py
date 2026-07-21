@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.utils import timezone
 from datetime import timedelta
-from .models import Product, Cart, CartItem, Order, OrderItem, Category, UserProfile
+from .models import Product, Cart, CartItem, Order, OrderItem, Category, UserProfile, ContactMessage
 from django.contrib import messages
 import csv
 from django.http import HttpResponse
@@ -584,3 +584,35 @@ def export_users_csv(request):
         ])
 
     return response
+
+def contact_us(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        subject = request.POST.get('subject')
+        message = request.POST.get('message')
+
+        ContactMessage.objects.create(
+            name=name,
+            email=email,
+            subject=subject,
+            message=message
+        )
+        messages.success(request, "Thank you for reaching out! We'll get back to you soon.")
+        return redirect('contact_us')
+
+    return render(request, 'contact_us.html')
+
+@admin_required
+def admin_contact_messages(request):
+    contact_messages = ContactMessage.objects.all().order_by('-created_at')
+    unread_count = ContactMessage.objects.filter(is_read=False).count()
+    return render(request, 'admin_contact_messages.html', {'contact_messages': contact_messages, 'unread_count': unread_count})
+
+
+@admin_required
+def mark_message_read(request, message_id):
+    message = get_object_or_404(ContactMessage, id=message_id)
+    message.is_read = True
+    message.save()
+    return HttpResponse(status=204)

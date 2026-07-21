@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="contact-wrapper">
+    <div class="contact-card">
+        <h2 class="fw-bold mb-1" style="color: var(--primary-color);">Get in Touch</h2>
+        <p class="text-muted mb-4">Have a question or feedback? We'd love to hear from you.</p>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label-custom">Your Name</label>
+                    <input type="text" name="name" class="form-control-custom" placeholder="Enter your name" required>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label-custom">Email Address</label>
+                    <input type="email" name="email" class="form-control-custom" placeholder="Enter your email" required>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label-custom">Subject</label>
+                <input type="text" name="subject" class="form-control-custom" placeholder="What is this about?" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label-custom">Message</label>
+                <textarea name="message" rows="5" class="form-control-custom" placeholder="Write your message here..." required></textarea>
+            </div>
+
+            <button type="submit" class="contact-submit-btn">Send Message</button>
+        </form>
+    </div>
+
+    <div class="contact-info-card">
+        <h5 class="fw-bold mb-3" style="color: white;">Contact Information</h5>
+        <div class="contact-info-item">
+            <span class="contact-info-icon">📧</span>
+            <span>contact@khorgosh.com</span>
+        </div>
+        <div class="contact-info-item">
+            <span class="contact-info-icon">📱</span>
+            <span>+880 1XXX-XXXXXX</span>
+        </div>
+        <div class="contact-info-item">
+            <span class="contact-info-icon">🕒</span>
+            <span>Sun - Thu: 9:00 AM - 6:00 PM</span>
+        </div>
+    </div>
+</div>
+
+<style>
+    .contact-wrapper {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+    }
+
+    .contact-card {
+        background: white;
+        border-radius: 16px;
+        padding: 32px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    }
+
+    .contact-info-card {
+        background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+        border-radius: 16px;
+        padding: 32px 24px;
+        color: white;
+        height: fit-content;
+    }
+
+    .contact-info-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 500;
+    }
+
+    .contact-info-icon {
+        font-size: 20px;
+    }
+
+    .form-label-custom {
+        display: block;
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 6px;
+        color: #333;
+    }
+
+    .form-control-custom {
+        width: 100%;
+        padding: 11px 14px;
+        border: 2px solid #eee;
+        border-radius: 10px;
+        font-size: 14.5px;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .form-control-custom:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px rgba(255, 111, 0, 0.15);
+    }
+
+    .contact-submit-btn {
+        background: linear-gradient(90deg, #ff6f00, #ff8f00);
+        color: white;
+        font-weight: 700;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 28px;
+        font-size: 15px;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .contact-submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(255, 111, 0, 0.35);
+    }
+
+    @media (max-width: 768px) {
+        .contact-wrapper {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+{% endblock %}

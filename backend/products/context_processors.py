@@ -13,3 +13,11 @@ def cart_count(request):
 
 def categories_processor(request):
     return {'all_categories': Category.objects.all()}
+
+def unread_messages_count(request):
+    if request.user.is_authenticated and request.user.is_superuser:
+        from .models import ContactMessage
+        count = ContactMessage.objects.filter(is_read=False).count()
+        display_count = '99+' if count > 99 else count
+        return {'unread_messages_count': count, 'unread_messages_display': display_count}
+    return {'unread_messages_count': 0, 'unread_messages_display': 0}

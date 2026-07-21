@@ -1,0 +1,131 @@
+{% extends 'admin_base.html' %}
+{% block admin_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <h2 class="fw-bold admin-page-title mb-0">Contact Messages</h2>
+    {% if unread_count > 0 %}
+    <span class="unread-summary-badge" id="unread-badge" {% if unread_count == 0 %}style="display:none;"{% endif %}>{{ unread_count }} Unread</span>
+    {% endif %}
+</div>
+
+{% if contact_messages %}
+<div class="row g-3">
+    {% for msg in contact_messages %}
+    <div class="col-12">
+        <div class="message-card {% if not msg.is_read %}message-unread{% endif %}" id="message-{{ msg.id }}">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                <div>
+                    {% if not msg.is_read %}
+                    <span class="new-dot" id="dot-{{ msg.id }}"></span>
+                    {% endif %}
+                    <h6 class="fw-bold mb-1 d-inline">{{ msg.subject }}</h6>
+                    <p class="text-muted small mb-0">From: {{ msg.name }} ({{ msg.email }})</p>
+                </div>
+                <div class="text-end">
+                    <span class="text-muted small d-block">{{ msg.created_at|date:"d M Y, h:i A" }}</span>
+                    {% if not msg.is_read %}
+                    <a href="#" class="mark-read-link" onclick="markAsRead(event, {{ msg.id }}, this)">Mark as Read</a>
+                    {% endif %}
+                </div>
+            </div>
+            <p class="mt-2 mb-0 message-text">{{ msg.message }}</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-5 dashboard-empty">
+    <h4 class="text-muted">📭 No messages yet</h4>
+</div>
+{% endif %}
+
+<style>
+    .admin-page-title {
+        color: var(--primary-color);
+    }
+
+    .unread-summary-badge {
+        background: #c62828;
+        color: white;
+        font-weight: 700;
+        font-size: 13px;
+        padding: 6px 16px;
+        border-radius: 20px;
+    }
+
+    .message-card {
+        background: white;
+        border-radius: 14px;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        border-left: 4px solid transparent;
+    }
+
+    .message-unread {
+        border-left-color: var(--accent-color);
+        background: #fffaf5;
+    }
+
+    .new-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--accent-color);
+        margin-right: 6px;
+    }
+
+    .message-text {
+        color: #555;
+        font-size: 14.5px;
+        line-height: 1.6;
+    }
+
+    .mark-read-link {
+        display: inline-block;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--primary-color);
+        text-decoration: none;
+        margin-top: 4px;
+    }
+
+    .mark-read-link:hover {
+        text-decoration: underline;
+    }
+
+    .dashboard-empty {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    }
+</style>
+
+<script>
+function markAsRead(event, messageId, linkEl) {
+    event.preventDefault();
+
+    fetch(`/mark-message-read/${messageId}/`, {
+        method: 'GET',
+    }).then(function() {
+        const card = document.getElementById('message-' + messageId);
+        const dot = document.getElementById('dot-' + messageId);
+        if (card) card.classList.remove('message-unread');
+        if (dot) dot.remove();
+        linkEl.remove();
+
+        const badge = document.getElementById('unread-badge');
+        if (badge) {
+            const currentCount = parseInt(badge.textContent);
+            const newCount = currentCount - 1;
+            if (newCount > 0) {
+                badge.textContent = newCount + ' Unread';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+    });
+}
+</script>
+
+{% endblock %}
