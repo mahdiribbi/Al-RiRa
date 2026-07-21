@@ -8,6 +8,8 @@ from django.utils import timezone
 from datetime import timedelta
 from .models import Product, Cart, CartItem, Order, OrderItem, Category
 from django.contrib import messages
+import csv
+from django.http import HttpResponse
 
 
 def home(request):
@@ -243,6 +245,8 @@ def my_admin_dashboard(request):
     pending_count = pending_orders.count()
     total_users = User.objects.filter(is_superuser=False).count()
     total_products = Product.objects.count()
+    low_stock_products = Product.objects.filter(stock__lte=5, stock__gt=0).order_by('stock')
+    out_of_stock_products = Product.objects.filter(stock=0)
     total_revenue = Order.objects.exclude(status='cancelled').aggregate(Sum('total_amount'))['total_amount__sum'] or 0
 
     chart_labels = []
@@ -267,6 +271,8 @@ def my_admin_dashboard(request):
         'total_revenue': total_revenue,
         'chart_labels': chart_labels,
         'chart_data': chart_data,
+        'low_stock_products': low_stock_products,
+        'out_of_stock_products': out_of_stock_products,
     }
     return render(request, 'my_admin_dashboard.html', context)
 
@@ -304,8 +310,13 @@ def admin_required(view_func):
 
 @admin_required
 def admin_product_list(request):
+    query = request.GET.get('q')
     products = Product.objects.all().order_by('-created_at')
-    return render(request, 'admin_product_list.html', {'products': products})
+
+    if query:
+        products = products.filter(name__icontains=query)
+
+    return render(request, 'admin_product_list.html', {'products': products, 'search_query': query})
 
 
 @admin_required
@@ -424,7 +435,11 @@ def admin_all_orders(request):
 
 @admin_required
 def admin_user_list(request):
+    query = request.GET.get('q')
     users = User.objects.filter(is_superuser=False).order_by('-date_joined')
+
+    if query:
+        users = users.filter(username__icontains=query)
 
     user_data = []
     for user in users:
@@ -434,7 +449,7 @@ def admin_user_list(request):
             'order_count': order_count,
         })
 
-    return render(request, 'admin_user_list.html', {'user_data': user_data})
+    return render(request, 'admin_user_list.html', {'user_data': user_data, 'search_query': query})
 
 
 @login_required
@@ -460,3 +475,77 @@ def profile_edit(request):
                 return redirect('profile_edit')
 
     return render(request, 'profile_edit.html')
+
+
+@admin_required
+def admin_profile(request):
+    if request.method == 'POST':
+        if 'update_info' in request.POST:
+            request.user.first_name = request.POST.get('first_name', '')
+            request.user.email = request.POST.get('email', '')
+            request.user.save()
+            messages.success(request, "Your profile information has been updated.")
+            return redirect('admin_profile')
+
+        elif 'change_password' in request.POST:
+            password_form = PasswordChangeForm(request.user, request.POST)
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, "Your password has been changed successfully.")
+                return redirect('admin_profile')
+            else:
+                for error in password_form.errors.values():
+                    messages.error(request, error.as_text())
+                return redirect('admin_profile')
+
+    return render(request, 'admin_profile.html')
+
+@admin_required
+def admin_order_detail(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    order_items = order.items.all()
+    return render(request, 'admin_order_detail.html', {'order': order, 'order_items': order_items})
+
+@admin_required
+def export_orders_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="orders.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Order ID', 'Customer', 'Email', 'Date', 'Amount', 'Status'])
+
+    orders = Order.objects.all().order_by('-created_at')
+    for order in orders:
+        writer.writerow([
+            order.id,
+            order.user.username,
+            order.user.email,
+            order.created_at.strftime('%d %b %Y, %I:%M %p'),
+            order.total_amount,
+            order.get_status_display(),
+        ])
+
+    return response
+
+
+@admin_required
+def export_users_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="users.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Username', 'Email', 'Date Joined', 'Total Orders'])
+
+    users = User.objects.filter(is_superuser=False).order_by('-date_joined')
+    for user in users:
+        order_count = Order.objects.filter(user=user).count()
+        writer.writerow([
+            user.username,
+            user.email,
+            user.date_joined.strftime('%d %b %Y'),
+            order_count,
+        ])
+
+    return response
+

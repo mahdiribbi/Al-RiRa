@@ -39,6 +39,30 @@
     <canvas id="revenueChart" height="80"></canvas>
 </div>
 
+{% if low_stock_products or out_of_stock_products %}
+<div class="stock-alert-card mb-5">
+    <h4 class="fw-bold mb-3 dashboard-subtitle">⚠️ Stock Alerts</h4>
+    <div class="row g-3">
+        {% for product in out_of_stock_products %}
+        <div class="col-md-4">
+            <div class="stock-alert-item stock-alert-danger">
+                <span class="stock-alert-name">{{ product.name }}</span>
+                <span class="stock-alert-badge">Out of Stock</span>
+            </div>
+        </div>
+        {% endfor %}
+        {% for product in low_stock_products %}
+        <div class="col-md-4">
+            <div class="stock-alert-item stock-alert-warning">
+                <span class="stock-alert-name">{{ product.name }}</span>
+                <span class="stock-alert-badge">{{ product.stock }} left</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
 <h4 class="fw-bold mb-3 dashboard-subtitle">⏳ Pending Orders</h4>
 
 {% if pending_orders %}
@@ -124,6 +148,52 @@
         border-radius: 16px;
         padding: 24px;
         box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    }
+
+    .stock-alert-card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    }
+
+    .stock-alert-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 14px;
+    }
+
+    .stock-alert-name {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .stock-alert-badge {
+        font-size: 12px;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 20px;
+    }
+
+    .stock-alert-warning {
+        background: #fff3cd;
+    }
+
+    .stock-alert-warning .stock-alert-badge {
+        background: #ff6f00;
+        color: white;
+    }
+
+    .stock-alert-danger {
+        background: #f8d7da;
+    }
+
+    .stock-alert-danger .stock-alert-badge {
+        background: #c62828;
+        color: white;
     }
 
     .dashboard-table-wrapper {

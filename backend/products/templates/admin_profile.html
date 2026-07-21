@@ -1,0 +1,128 @@
+{% extends 'admin_base.html' %}
+{% block admin_content %}
+
+<h2 class="fw-bold admin-page-title mb-4">⚙️ My Profile</h2>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="admin-form-card">
+            <h5 class="profile-card-title">Personal Information</h5>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="update_info" value="1">
+
+                <div class="mb-3">
+                    <label class="form-label-custom">Username</label>
+                    <input type="text" class="form-control-custom" value="{{ user.username }}" disabled>
+                    <small class="text-muted">Username cannot be changed</small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label-custom">First Name</label>
+                    <input type="text" name="first_name" class="form-control-custom" value="{{ user.first_name }}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label-custom">Email</label>
+                    <input type="email" name="email" class="form-control-custom" value="{{ user.email }}">
+                </div>
+
+                <button type="submit" class="form-submit-btn">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="admin-form-card">
+            <h5 class="profile-card-title">Change Password</h5>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="change_password" value="1">
+
+                <div class="mb-3">
+                    <label class="form-label-custom">Old Password</label>
+                    <input type="password" name="old_password" class="form-control-custom" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label-custom">New Password</label>
+                    <input type="password" name="new_password1" class="form-control-custom" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label-custom">Confirm New Password</label>
+                    <input type="password" name="new_password2" class="form-control-custom" required>
+                </div>
+
+                <button type="submit" class="form-submit-btn">Change Password</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .admin-page-title {
+        color: var(--primary-color);
+    }
+
+    .admin-form-card {
+        background: white;
+        border-radius: 16px;
+        padding: 28px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+        height: 100%;
+    }
+
+    .profile-card-title {
+        color: var(--primary-color);
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    .form-label-custom {
+        display: block;
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 6px;
+        color: #333;
+    }
+
+    .form-control-custom {
+        width: 100%;
+        padding: 11px 14px;
+        border: 2px solid #eee;
+        border-radius: 10px;
+        font-size: 14.5px;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .form-control-custom:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px rgba(255, 111, 0, 0.15);
+    }
+
+    .form-control-custom:disabled {
+        background: #f5f5f7;
+        color: #999;
+    }
+
+    .form-submit-btn {
+        background: linear-gradient(90deg, #ff6f00, #ff8f00);
+        color: white;
+        font-weight: 700;
+        border: none;
+        border-radius: 10px;
+        padding: 11px 26px;
+        font-size: 14.5px;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .form-submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(255, 111, 0, 0.35);
+    }
+</style>
+
+{% endblock %}

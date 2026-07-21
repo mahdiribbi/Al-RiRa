@@ -33,4 +33,8 @@ urlpatterns = [
     path('admin-dashboard/orders/', views.admin_all_orders, name='admin_all_orders'),
     path('admin-dashboard/users/', views.admin_user_list, name='admin_user_list'),
     path('profile/', views.profile_edit, name='profile_edit'),
+    path('admin-dashboard/profile/', views.admin_profile, name='admin_profile'),
+    path('admin-dashboard/orders/<int:order_id>/', views.admin_order_detail, name='admin_order_detail'),
+    path('admin-dashboard/orders/export/', views.export_orders_csv, name='export_orders_csv'),
+    path('admin-dashboard/users/export/', views.export_users_csv, name='export_users_csv'),
 ]

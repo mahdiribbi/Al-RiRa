@@ -286,6 +286,76 @@
             background-color: #e65100;
         }
 
+        .mini-cart-dropdown {
+            width: 320px;
+            border-radius: 16px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .mini-cart-item {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            padding: 8px 0;
+        }
+
+        .mini-cart-img {
+            width: 48px;
+            height: 48px;
+            object-fit: cover;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+
+        .mini-cart-img-placeholder {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f7;
+            border-radius: 8px;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .mini-cart-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .mini-cart-name {
+            font-weight: 600;
+            font-size: 13.5px;
+            color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .mini-cart-qty {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .mini-cart-divider {
+            margin: 10px 0;
+        }
+
+        .mini-cart-btn {
+            background: linear-gradient(90deg, #ff6f00, #ff8f00);
+            color: white;
+            font-weight: 700;
+            border-radius: 8px;
+        }
+
+        .mini-cart-btn:hover {
+            color: white;
+        }
+
         @media (max-width: 768px) {
             .navbar {
                 flex-wrap: wrap;
@@ -334,15 +404,43 @@
             {% if user.is_authenticated %}
                 {% if user.is_superuser %}
                     <a href="{% url 'my_admin_dashboard' %}" class="btn btn-outline-light">📊 Dashboard</a>
+                    <a href="{% url 'admin_profile' %}" class="btn btn-outline-light">⚙️ Profile</a>
                 {% else %}
-                    <a href="{% url 'cart' %}" class="btn btn-outline-light position-relative">
-                        Cart
-                         {% if cart_item_count > 0 %}
-                        <span class="badge bg-danger">{{ cart_item_count }}</span>
-                        {% endif %}
-                     </a>
-                      <a href="{% url 'my_orders' %}" class="btn btn-outline-light">My Orders</a>
-                     <a href="{% url 'profile_edit' %}" class="btn btn-outline-light">🪪 Profile</a>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light position-relative dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            Cart
+                            {% if cart_item_count > 0 %}
+                            <span class="badge bg-danger">{{ cart_item_count }}</span>
+                            {% endif %}
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end mini-cart-dropdown p-3">
+                            {% if mini_cart_items %}
+                                {% for item in mini_cart_items %}
+                                <div class="mini-cart-item">
+                                    {% if item.product.image %}
+                                    <img src="{{ item.product.image.url }}" class="mini-cart-img" alt="{{ item.product.name }}">
+                                    {% else %}
+                                    <div class="mini-cart-img-placeholder">📦</div>
+                                    {% endif %}
+                                    <div class="mini-cart-info">
+                                        <div class="mini-cart-name">{{ item.product.name }}</div>
+                                        <div class="mini-cart-qty">Qty: {{ item.quantity }} × ৳{{ item.product.price }}</div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                <hr class="mini-cart-divider">
+                                <div class="d-flex justify-content-between mb-3">
+                                    <span class="fw-semibold">Total:</span>
+                                    <span class="fw-bold" style="color: var(--accent-color);">৳ {{ mini_cart_total }}</span>
+                                </div>
+                                <a href="{% url 'cart' %}" class="btn mini-cart-btn w-100">View Full Cart</a>
+                            {% else %}
+                                <p class="text-center text-muted mb-0 py-3">Your cart is empty</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <a href="{% url 'my_orders' %}" class="btn btn-outline-light">My Orders</a>
+                    <a href="{% url 'profile_edit' %}" class="btn btn-outline-light">🪪 Profile</a>
                 {% endif %}
                 <form method="post" action="{% url 'logout' %}" class="d-inline m-0" id="logout-form">
                     {% csrf_token %}
