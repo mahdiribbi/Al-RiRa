@@ -208,6 +208,10 @@ def terms_conditions(request):
     return render(request, 'terms_conditions.html')
 
 
+def faq(request):
+    return render(request, 'faq.html')
+
+
 def category_detail(request, slug):
     category = get_object_or_404(Category, slug=slug)
     product_list = Product.objects.filter(category=category)
@@ -455,8 +459,6 @@ def admin_user_list(request):
 
     return render(request, 'admin_user_list.html', {'user_data': user_data, 'search_query': query})
 
-    return render(request, 'admin_user_list.html', {'user_data': user_data, 'search_query': query})
-
 
 @login_required
 def profile_edit(request):
@@ -585,6 +587,7 @@ def export_users_csv(request):
 
     return response
 
+
 def contact_us(request):
     if request.method == 'POST':
         name = request.POST.get('name')
@@ -602,6 +605,7 @@ def contact_us(request):
         return redirect('contact_us')
 
     return render(request, 'contact_us.html')
+
 
 @admin_required
 def admin_contact_messages(request):
