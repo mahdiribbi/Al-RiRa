@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
-{% block content %}
 
+{% block title %}{{ category.name }} - Khorgosh{% endblock %}
+{% block description %}Browse our {{ category.name }} collection at Khorgosh — quality baby products at the best price.{% endblock %}
+
+{% block content %}
 <h2 class="mb-4 fw-bold" style="color: var(--primary-color);">{{ category.name }}</h2>
 
 <div class="row">
