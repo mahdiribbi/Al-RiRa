@@ -3,6 +3,51 @@
 
 <h2 class="mb-4 fw-bold" style="color: var(--primary-color);">👤 My Profile</h2>
 
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="profile-card text-center">
+            <div class="avatar-wrapper">
+                {% if profile.avatar %}
+                <img src="{{ profile.avatar.url }}" class="avatar-img" alt="{{ user.username }}">
+                {% else %}
+                <div class="avatar-placeholder">{{ user.username|slice:":1"|upper }}</div>
+                {% endif %}
+            </div>
+            <h5 class="fw-bold mt-3 mb-1">{{ user.username }}</h5>
+            <p class="text-muted small mb-3">Member since {{ user.date_joined|date:"d M Y" }}</p>
+
+            <form method="POST" enctype="multipart/form-data" id="avatar-form">
+                {% csrf_token %}
+                <input type="hidden" name="update_info" value="1">
+                <input type="hidden" name="username" value="{{ user.username }}">
+                <input type="hidden" name="first_name" value="{{ user.first_name }}">
+                <input type="hidden" name="email" value="{{ user.email }}">
+                <label for="avatar-input" class="avatar-upload-btn">Change Photo</label>
+                <input type="file" name="avatar" id="avatar-input" accept="image/*" class="d-none" onchange="document.getElementById('avatar-form').submit();">
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="row g-3 h-100">
+            <div class="col-6">
+                <div class="stat-mini-card">
+                    <div class="stat-mini-icon">📦</div>
+                    <div class="stat-mini-value">{{ total_orders }}</div>
+                    <div class="stat-mini-label">Total Orders</div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="stat-mini-card">
+                    <div class="stat-mini-icon">💰</div>
+                    <div class="stat-mini-value">৳ {{ total_spent }}</div>
+                    <div class="stat-mini-label">Total Spent</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row g-4">
     <div class="col-md-6">
         <div class="profile-card">
@@ -13,8 +58,7 @@
 
                 <div class="mb-3">
                     <label class="form-label-custom">Username</label>
-                    <input type="text" class="form-control-custom" value="{{ user.username }}" disabled>
-                    <small class="text-muted">Username cannot be changed</small>
+                    <input type="text" name="username" class="form-control-custom" value="{{ user.username }}">
                 </div>
 
                 <div class="mb-3">
@@ -33,7 +77,7 @@
     </div>
 
     <div class="col-md-6">
-        <div class="profile-card">
+        <div class="profile-card mb-4">
             <h5 class="profile-card-title">Change Password</h5>
             <form method="POST">
                 {% csrf_token %}
@@ -57,6 +101,12 @@
                 <button type="submit" class="profile-btn">Change Password</button>
             </form>
         </div>
+
+        <div class="profile-card danger-zone">
+            <h5 class="profile-card-title text-danger">Danger Zone</h5>
+            <p class="text-muted small mb-3">Deleting your account is permanent and cannot be undone. All your orders and data will be removed.</p>
+            <button type="button" class="delete-account-btn" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">Delete My Account</button>
+        </div>
     </div>
 </div>
 
@@ -73,6 +123,78 @@
         color: var(--primary-color);
         font-weight: 700;
         margin-bottom: 20px;
+    }
+
+    .avatar-wrapper {
+        display: flex;
+        justify-content: center;
+    }
+
+    .avatar-img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    }
+
+    .avatar-placeholder {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #1a237e, #283593);
+        color: white;
+        font-size: 40px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    }
+
+    .avatar-upload-btn {
+        display: inline-block;
+        background: #f0f2f8;
+        color: var(--primary-color);
+        font-weight: 600;
+        font-size: 13px;
+        padding: 8px 18px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+    }
+
+    .avatar-upload-btn:hover {
+        background: #e0e4f2;
+    }
+
+    .stat-mini-card {
+        background: white;
+        border-radius: 16px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .stat-mini-icon {
+        font-size: 26px;
+        margin-bottom: 6px;
+    }
+
+    .stat-mini-value {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--primary-color);
+    }
+
+    .stat-mini-label {
+        font-size: 12.5px;
+        color: #888;
+        font-weight: 600;
     }
 
     .form-label-custom {
@@ -119,6 +241,47 @@
         transform: translateY(-2px);
         box-shadow: 0 6px 16px rgba(255, 111, 0, 0.35);
     }
+
+    .danger-zone {
+        border: 2px solid #f8d7da;
+    }
+
+    .delete-account-btn {
+        background: white;
+        color: #c62828;
+        border: 2px solid #c62828;
+        font-weight: 700;
+        border-radius: 10px;
+        padding: 10px 22px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .delete-account-btn:hover {
+        background: #c62828;
+        color: white;
+    }
 </style>
 
+{% endblock %}
+
+{% block modals %}
+<div class="modal fade" id="deleteAccountModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 20px; border: none;">
+            <div class="modal-body text-center p-4">
+                <h4 class="fw-bold mb-2 text-danger">Delete Account?</h4>
+                <p class="text-muted mb-4">This action is permanent. Your account, orders, and cart data will be permanently deleted. Are you sure?</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+                    <form method="POST" class="m-0">
+                        {% csrf_token %}
+                        <button type="submit" name="delete_account" value="1" class="btn btn-danger px-4">Yes, Delete My Account</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

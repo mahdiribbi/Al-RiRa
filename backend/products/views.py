@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.utils import timezone
 from datetime import timedelta
-from .models import Product, Cart, CartItem, Order, OrderItem, Category
+from .models import Product, Cart, CartItem, Order, OrderItem, Category, UserProfile
 from django.contrib import messages
 import csv
 from django.http import HttpResponse
@@ -444,21 +444,42 @@ def admin_user_list(request):
     user_data = []
     for user in users:
         order_count = Order.objects.filter(user=user).count()
+        avatar = None
+        if hasattr(user, 'profile') and user.profile.avatar:
+            avatar = user.profile.avatar.url
         user_data.append({
             'user': user,
             'order_count': order_count,
+            'avatar': avatar,
         })
+
+    return render(request, 'admin_user_list.html', {'user_data': user_data, 'search_query': query})
 
     return render(request, 'admin_user_list.html', {'user_data': user_data, 'search_query': query})
 
 
 @login_required
 def profile_edit(request):
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+
     if request.method == 'POST':
         if 'update_info' in request.POST:
+            new_username = request.POST.get('username', '').strip()
+
+            if new_username != request.user.username:
+                if User.objects.filter(username=new_username).exclude(id=request.user.id).exists():
+                    messages.error(request, "This username is already taken.")
+                    return redirect('profile_edit')
+                request.user.username = new_username
+
             request.user.first_name = request.POST.get('first_name', '')
             request.user.email = request.POST.get('email', '')
             request.user.save()
+
+            if request.FILES.get('avatar'):
+                profile.avatar = request.FILES.get('avatar')
+                profile.save()
+
             messages.success(request, "Your profile information has been updated.")
             return redirect('profile_edit')
 
@@ -474,7 +495,20 @@ def profile_edit(request):
                     messages.error(request, error.as_text())
                 return redirect('profile_edit')
 
-    return render(request, 'profile_edit.html')
+        elif 'delete_account' in request.POST:
+            request.user.delete()
+            messages.success(request, "Your account has been deleted.")
+            return redirect('home')
+
+    total_orders = Order.objects.filter(user=request.user).count()
+    total_spent = Order.objects.filter(user=request.user).exclude(status='cancelled').aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+
+    context = {
+        'profile': profile,
+        'total_orders': total_orders,
+        'total_spent': total_spent,
+    }
+    return render(request, 'profile_edit.html', context)
 
 
 @admin_required
@@ -501,11 +535,13 @@ def admin_profile(request):
 
     return render(request, 'admin_profile.html')
 
+
 @admin_required
 def admin_order_detail(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     order_items = order.items.all()
     return render(request, 'admin_order_detail.html', {'order': order, 'order_items': order_items})
+
 
 @admin_required
 def export_orders_csv(request):
@@ -548,4 +584,3 @@ def export_users_csv(request):
         ])
 
     return response
-
