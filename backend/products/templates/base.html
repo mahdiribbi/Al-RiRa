@@ -46,6 +46,16 @@
 
         .navbar-brand img:hover {
             transform: scale(1.8);
+        }   
+
+        .navbar-brand span {
+            transition: transform 0.25s ease, text-shadow 0.25s ease;
+            position: relative;
+        }
+
+        .navbar-brand span:hover {
+            transform: translateY(-4px);
+            text-shadow: 0 0 14px rgba(230, 81, 0, 0.9);
         }
 
         .search-form {
