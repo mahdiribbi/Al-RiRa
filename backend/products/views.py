@@ -152,6 +152,24 @@ def product_detail(request, product_id):
 
 
 @login_required
+def checkout_review(request):
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    cart_items = cart.items.all()
+
+    if not cart_items:
+        return redirect('cart')
+
+    for item in cart_items:
+        if item.quantity > item.product.stock:
+            messages.error(request, f"Sorry, only {item.product.stock} units of {item.product.name} are available. Please update your cart.")
+            return redirect('cart')
+
+    total = sum(item.total_price() for item in cart_items)
+
+    return render(request, 'checkout_review.html', {'cart_items': cart_items, 'total': total})
+
+
+@login_required
 def checkout(request):
     cart, created = Cart.objects.get_or_create(user=request.user)
     cart_items = cart.items.all()
