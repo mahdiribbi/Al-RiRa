@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load page_filters %}
 
 {% block title %}About Us - Khorgosh{% endblock %}
 {% block description %}Learn more about Khorgosh, your trusted online store for baby products in Bangladesh.{% endblock %}
@@ -6,13 +7,9 @@
 {% block content %}
 
 <div class="static-page-card">
-    <h1 class="fw-bold mb-4" style="color: var(--primary-color);">About Us</h1>
+    <h1 class="fw-bold mb-4" style="color: var(--primary-color);">{{ page.title }}</h1>
 
-    <p>Welcome to <strong>Khorgosh</strong> — your trusted online shopping destination. We are dedicated to bringing you quality products at the best prices, with a shopping experience that's simple, fast, and reliable.</p>
-
-    <p>Our mission is to make online shopping accessible and enjoyable for everyone. From everyday essentials to special finds, we carefully select every product to ensure you get the best value for your money.</p>
-
-    <p>Founded with a passion for great service, Khorgosh continues to grow thanks to the trust of our customers. Thank you for choosing us — we look forward to serving you.</p>
+    {{ page.content|render_page_content }}
 </div>
 
 <style>

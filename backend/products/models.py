@@ -98,3 +98,54 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f"{self.subject} - {self.name}"
+    
+
+class SiteContactInfo(models.Model):
+    TYPE_CHOICES = [
+        ('email', 'Email'),
+        ('phone', 'Phone'),
+    ]
+    type = models.CharField(max_length=10, choices=TYPE_CHOICES)
+    value = models.CharField(max_length=100)
+    label = models.CharField(max_length=50, blank=True, help_text="Optional, e.g. Support, Sales")
+    order = models.PositiveIntegerField(default=0, help_text="Lower numbers show first")
+
+    class Meta:
+        ordering = ['order']
+        verbose_name_plural = "Site Contact Info"
+
+    def __str__(self):
+        return f"{self.get_type_display()}: {self.value}"
+
+class SitePage(models.Model):
+    PAGE_CHOICES = [
+        ('about_us', 'About Us'),
+        ('privacy_policy', 'Privacy Policy'),
+        ('terms_conditions', 'Terms & Conditions'),
+    ]
+    page_key = models.CharField(max_length=30, choices=PAGE_CHOICES, unique=True)
+    title = models.CharField(max_length=200)
+    content = models.TextField(help_text="Leave a blank line between paragraphs.")
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.get_page_key_display()
+
+    
+
+class FAQItem(models.Model):
+    CATEGORY_CHOICES = [
+        ('orders', 'Orders & Shipping'),
+        ('payment', 'Payment'),
+        ('account', 'Account'),
+    ]
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
+    question = models.CharField(max_length=300)
+    answer = models.TextField()
+    order = models.PositiveIntegerField(default=0, help_text="Lower numbers show first")
+
+    class Meta:
+        ordering = ['category', 'order']
+
+    def __str__(self):
+        return self.question

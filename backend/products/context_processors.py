@@ -21,3 +21,7 @@ def unread_messages_count(request):
         display_count = '99+' if count > 99 else count
         return {'unread_messages_count': count, 'unread_messages_display': display_count}
     return {'unread_messages_count': 0, 'unread_messages_display': 0}
+
+def contact_info(request):
+    from .models import SiteContactInfo
+    return {'site_contact_info': SiteContactInfo.objects.all()}

@@ -5,27 +5,36 @@
     <aside class="admin-sidebar">
         <h6 class="admin-sidebar-title">Admin Panel</h6>
         <nav class="admin-nav">
-            <a href="{% url 'my_admin_dashboard' %}" class="admin-nav-link {% if request.path == '/my-admin-dashboard/' %}active{% endif %}">
-                📊 Dashboard
-            </a>
-            <a href="{% url 'admin_product_list' %}" class="admin-nav-link {% if '/admin-dashboard/products/' in request.path %}active{% endif %}">
-                📦 Manage Products
-            </a>
-            <a href="{% url 'admin_category_list' %}" class="admin-nav-link {% if '/admin-dashboard/categories/' in request.path %}active{% endif %}">
-                🏷️ Manage Categories
-            </a>
+             <a href="{% url 'my_admin_dashboard' %}" class="admin-nav-link {% if request.path == '/my-admin-dashboard/' %}active{% endif %}">
+               📊 Dashboard
+             </a>
+             <a href="{% url 'admin_product_list' %}" class="admin-nav-link {% if '/admin-dashboard/products/' in request.path %}active{% endif %}">
+              📦 Manage Products
+             </a>
+             <a href="{% url 'admin_category_list' %}" class="admin-nav-link {% if '/admin-dashboard/categories/' in request.path %}active{% endif %}">
+              🏷️ Manage Categories
+             </a>
             <a href="{% url 'admin_all_orders' %}" class="admin-nav-link {% if '/admin-dashboard/orders/' in request.path %}active{% endif %}">
-                🧾 All Orders
-            </a>
-           <a href="{% url 'admin_user_list' %}" class="admin-nav-link {% if '/admin-dashboard/users/' in request.path %}active{% endif %}">
-                👥 Users
-           </a>
-            <hr class="admin-nav-divider">
-            <a href="{% url 'home' %}" class="admin-nav-link">
-                🏠 Visit Site
-            </a>
+             🧾 All Orders
+             </a>
+            <a href="{% url 'admin_user_list' %}" class="admin-nav-link {% if '/admin-dashboard/users/' in request.path %}active{% endif %}">
+               👥 Users
+             </a>
+             <hr class="admin-nav-divider">
+             <a href="{% url 'home' %}" class="admin-nav-link">
+                  🏠 Visit Site
+             </a>
             <a href="{% url 'admin_contact_messages' %}" class="admin-nav-link {% if '/admin-dashboard/messages/' in request.path %}active{% endif %}">
-                ✉️ Messages
+                 ✉️ Messages
+             </a>
+            <a href="{% url 'admin_contact_info_list' %}" class="admin-nav-link {% if '/admin-dashboard/contact-info/' in request.path %}active{% endif %}">
+             📞 Contact Info
+            </a>
+            <a href="{% url 'admin_site_pages_list' %}" class="admin-nav-link {% if '/admin-dashboard/site-pages/' in request.path %}active{% endif %}">
+             📄 Site Pages
+            </a>
+            <a href="{% url 'admin_faq_list' %}" class="admin-nav-link {% if '/admin-dashboard/faq/' in request.path %}active{% endif %}">
+             ❓ Manage FAQ
             </a>
         </nav>
     </aside>

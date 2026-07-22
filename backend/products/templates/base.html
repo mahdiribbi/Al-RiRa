@@ -501,14 +501,23 @@
                         <li><a href="{% url 'contact_us' %}">Contact Us</a></li>
                     </ul>
                 </div>
-                <div class="col-md-4">
-                    <h6 class="footer-heading">Contact Us</h6>
-                    <p class="footer-text mb-1">📧 contact@khorgosh.com</p>
-                    <p class="footer-text mb-3">📱 +880 1XXX-XXXXXX</p>
-                    <div class="social-icons">
+        <div class="col-md-4">
+            <h6 class="footer-heading">Contact Us</h6>
+            {% block footer_contact %}
+                 {% for contact in site_contact_info %}
+                     {% if contact.type == 'email' %}
+                     <p class="footer-text mb-1">📧 {{ contact.value }}</p>
+                     {% else %}
+                      <p class="footer-text mb-1">📱 {{ contact.value }}</p>
+                     {% endif %}
+                 {% empty %}
+                <p class="footer-text mb-1">📧 contact@khorgosh.com</p>
+                 {% endfor %}
+             {% endblock %}
+                     <div class="social-icons">
                         <a href="#" class="social-icon">📘</a>
-                        <a href="#" class="social-icon">📷</a>
-                    </div>
+                         <a href="#" class="social-icon">📷</a>
+                     </div>
                 </div>
             </div>
             <hr class="footer-divider">

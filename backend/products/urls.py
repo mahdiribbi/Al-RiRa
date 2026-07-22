@@ -81,4 +81,25 @@ urlpatterns = [
     path('admin-dashboard/messages/', views.admin_contact_messages, name='admin_contact_messages'),
    
     path('mark-message-read/<int:message_id>/', views.mark_message_read, name='mark_message_read'),
+
+    
+    path('admin-dashboard/contact-info/', views.admin_contact_info_list, name='admin_contact_info_list'),
+    
+    path('admin-dashboard/contact-info/add/', views.admin_contact_info_add, name='admin_contact_info_add'),
+   
+    path('admin-dashboard/contact-info/edit/<int:contact_id>/', views.admin_contact_info_edit, name='admin_contact_info_edit'),
+    
+    path('admin-dashboard/contact-info/delete/<int:contact_id>/', views.admin_contact_info_delete, name='admin_contact_info_delete'),
+
+    path('admin-dashboard/site-pages/', views.admin_site_pages_list, name='admin_site_pages_list'),
+
+    path('admin-dashboard/site-pages/edit/<str:page_key>/', views.admin_site_page_edit, name='admin_site_page_edit'),
+
+    path('admin-dashboard/faq/', views.admin_faq_list, name='admin_faq_list'),
+
+    path('admin-dashboard/faq/add/', views.admin_faq_add, name='admin_faq_add'),
+
+    path('admin-dashboard/faq/edit/<int:faq_id>/', views.admin_faq_edit, name='admin_faq_edit'),
+
+    path('admin-dashboard/faq/delete/<int:faq_id>/', views.admin_faq_delete, name='admin_faq_delete'),
 ]

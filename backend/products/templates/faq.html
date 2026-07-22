@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load page_filters %}
 
 {% block title %}FAQ - Khorgosh{% endblock %}
 {% block description %}Find answers to frequently asked questions about orders, shipping, payment, and your account at Khorgosh.{% endblock %}
 
-{% block title %}FAQ - Khorgosh{% endblock %}
-
 {% block content %}
+
 <div class="faq-page py-5">
     <div class="container">
         <div class="text-center mb-5">
@@ -17,124 +17,27 @@
         <div class="row justify-content-center">
             <div class="col-lg-8">
 
-                <h5 class="fw-bold mb-3 mt-2">Orders & Shipping</h5>
-                <div class="accordion mb-4" id="faqOrders">
-
+                {% for category_key, items in faq_by_category.items %}
+                <h5 class="fw-bold mb-3 mt-2">{{ category_labels|dictkey:category_key }}</h5>
+                <div class="accordion mb-4" id="faqCategory{{ forloop.counter }}">
+                    {% for item in items %}
                     <div class="accordion-item">
                         <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqO1">
-                                How do I track my order?
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq{{ item.id }}">
+                                {{ item.question }}
                             </button>
                         </h2>
-                        <div id="faqO1" class="accordion-collapse collapse" data-bs-parent="#faqOrders">
+                        <div id="faq{{ item.id }}" class="accordion-collapse collapse" data-bs-parent="#faqCategory{{ forloop.parentloop.counter }}">
                             <div class="accordion-body">
-                                You can track your order anytime from the "My Orders" page in your account. It shows the current status of each order, from pending to delivered.
+                                {{ item.answer }}
                             </div>
                         </div>
                     </div>
-
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqO2">
-                                How can I cancel my order?
-                            </button>
-                        </h2>
-                        <div id="faqO2" class="accordion-collapse collapse" data-bs-parent="#faqOrders">
-                            <div class="accordion-body">
-                                You can cancel an order from "My Orders" as long as it is still in the pending state. Once it has been shipped, cancellation is no longer possible.
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqO3">
-                                What is your return policy?
-                            </button>
-                        </h2>
-                        <div id="faqO3" class="accordion-collapse collapse" data-bs-parent="#faqOrders">
-                            <div class="accordion-body">
-                                If you receive a damaged or incorrect product, please contact us within 3 days of delivery through our Contact Us page, and we'll help resolve it.
-                            </div>
-                        </div>
-                    </div>
-
+                    {% endfor %}
                 </div>
-
-                <h5 class="fw-bold mb-3">Payment</h5>
-                <div class="accordion mb-4" id="faqPayment">
-
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqP1">
-                                What payment methods do you accept?
-                            </button>
-                        </h2>
-                        <div id="faqP1" class="accordion-collapse collapse" data-bs-parent="#faqPayment">
-                            <div class="accordion-body">
-                                Currently we support Cash on Delivery. Online payment options like bKash and Nagad will be added soon.
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqP2">
-                                Is Cash on Delivery available everywhere?
-                            </button>
-                        </h2>
-                        <div id="faqP2" class="accordion-collapse collapse" data-bs-parent="#faqPayment">
-                            <div class="accordion-body">
-                                Yes, Cash on Delivery is currently available for all locations we deliver to.
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <h5 class="fw-bold mb-3">Account</h5>
-                <div class="accordion mb-4" id="faqAccount">
-
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqA1">
-                                How do I change my password?
-                            </button>
-                        </h2>
-                        <div id="faqA1" class="accordion-collapse collapse" data-bs-parent="#faqAccount">
-                            <div class="accordion-body">
-                                Go to your Profile page and use the "Change Password" section. You'll need to enter your current password to set a new one.
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqA2">
-                                How do I update my profile information?
-                            </button>
-                        </h2>
-                        <div id="faqA2" class="accordion-collapse collapse" data-bs-parent="#faqAccount">
-                            <div class="accordion-body">
-                                Visit your Profile page to update your name, email, username, or avatar at any time.
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqA3">
-                                Can I delete my account?
-                            </button>
-                        </h2>
-                        <div id="faqA3" class="accordion-collapse collapse" data-bs-parent="#faqAccount">
-                            <div class="accordion-body">
-                                Yes, you can permanently delete your account from the "Danger Zone" section of your Profile page.
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
+                {% empty %}
+                <p class="text-center text-muted">No FAQs added yet. Please check back soon.</p>
+                {% endfor %}
 
                 <div class="text-center mt-5">
                     <p class="text-muted mb-2">Still have questions?</p>

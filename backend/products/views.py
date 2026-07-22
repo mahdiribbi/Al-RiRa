@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.utils import timezone
 from datetime import timedelta
-from .models import Product, Cart, CartItem, Order, OrderItem, Category, UserProfile, ContactMessage
+from .models import Product, Cart, CartItem, Order, OrderItem, Category, UserProfile, ContactMessage, SiteContactInfo, SitePage, FAQItem
 from django.contrib import messages
 import csv
 from django.http import HttpResponse
@@ -171,6 +171,9 @@ def checkout_review(request):
 
 @login_required
 def checkout(request):
+    if request.method != 'POST':
+        return redirect('cart')
+
     cart, created = Cart.objects.get_or_create(user=request.user)
     cart_items = cart.items.all()
 
@@ -215,19 +218,40 @@ def my_orders(request):
 
 
 def about_us(request):
-    return render(request, 'about_us.html')
+    page, created = SitePage.objects.get_or_create(
+        page_key='about_us',
+        defaults={'title': 'About Us', 'content': ''}
+    )
+    return render(request, 'about_us.html', {'page': page})
 
 
 def privacy_policy(request):
-    return render(request, 'privacy_policy.html')
+    page, created = SitePage.objects.get_or_create(
+        page_key='privacy_policy',
+        defaults={'title': 'Privacy Policy', 'content': ''}
+    )
+    return render(request, 'privacy_policy.html', {'page': page})
 
 
 def terms_conditions(request):
-    return render(request, 'terms_conditions.html')
+    page, created = SitePage.objects.get_or_create(
+        page_key='terms_conditions',
+        defaults={'title': 'Terms & Conditions', 'content': ''}
+    )
+    return render(request, 'terms_conditions.html', {'page': page})
 
 
 def faq(request):
-    return render(request, 'faq.html')
+    faq_items = FAQItem.objects.all()
+    faq_by_category = {}
+    for item in faq_items:
+        faq_by_category.setdefault(item.category, []).append(item)
+
+    context = {
+        'faq_by_category': faq_by_category,
+        'category_labels': dict(FAQItem.CATEGORY_CHOICES),
+    }
+    return render(request, 'faq.html', context)
 
 
 def category_detail(request, slug):
@@ -638,3 +662,130 @@ def mark_message_read(request, message_id):
     message.is_read = True
     message.save()
     return HttpResponse(status=204)
+
+@admin_required
+def admin_contact_info_list(request):
+    contact_info = SiteContactInfo.objects.all()
+    return render(request, 'admin_contact_info_list.html', {'contact_info': contact_info})
+
+
+@admin_required
+def admin_contact_info_add(request):
+    if request.method == 'POST':
+        type_ = request.POST.get('type')
+        value = request.POST.get('value')
+        label = request.POST.get('label')
+        order = request.POST.get('order') or 0
+
+        SiteContactInfo.objects.create(
+            type=type_,
+            value=value,
+            label=label,
+            order=order
+        )
+        messages.success(request, "Contact info added successfully.")
+        return redirect('admin_contact_info_list')
+
+    return render(request, 'admin_contact_info_form.html', {'contact': None})
+
+
+@admin_required
+def admin_contact_info_edit(request, contact_id):
+    contact = get_object_or_404(SiteContactInfo, id=contact_id)
+
+    if request.method == 'POST':
+        contact.type = request.POST.get('type')
+        contact.value = request.POST.get('value')
+        contact.label = request.POST.get('label')
+        contact.order = request.POST.get('order') or 0
+        contact.save()
+        messages.success(request, "Contact info updated successfully.")
+        return redirect('admin_contact_info_list')
+
+    return render(request, 'admin_contact_info_form.html', {'contact': contact})
+
+
+@admin_required
+def admin_contact_info_delete(request, contact_id):
+    contact = get_object_or_404(SiteContactInfo, id=contact_id)
+    contact.delete()
+    messages.success(request, "Contact info deleted.")
+    return redirect('admin_contact_info_list')
+
+
+@admin_required
+def admin_site_pages_list(request):
+    pages = SitePage.objects.all()
+    existing_keys = [p.page_key for p in pages]
+
+    all_keys = dict(SitePage.PAGE_CHOICES)
+    missing = [{'page_key': key, 'title': label} for key, label in all_keys.items() if key not in existing_keys]
+
+    return render(request, 'admin_site_pages_list.html', {'pages': pages, 'missing': missing})
+
+
+@admin_required
+def admin_site_page_edit(request, page_key):
+    page, created = SitePage.objects.get_or_create(
+        page_key=page_key,
+        defaults={'title': dict(SitePage.PAGE_CHOICES).get(page_key, page_key), 'content': ''}
+    )
+
+    if request.method == 'POST':
+        page.title = request.POST.get('title')
+        page.content = request.POST.get('content')
+        page.save()
+        messages.success(request, f"{page.title} updated successfully.")
+        return redirect('admin_site_pages_list')
+
+    return render(request, 'admin_site_page_form.html', {'page': page})
+
+
+@admin_required
+def admin_faq_list(request):
+    faq_items = FAQItem.objects.all()
+    return render(request, 'admin_faq_list.html', {'faq_items': faq_items})
+
+
+@admin_required
+def admin_faq_add(request):
+    if request.method == 'POST':
+        category = request.POST.get('category')
+        question = request.POST.get('question')
+        answer = request.POST.get('answer')
+        order = request.POST.get('order') or 0
+
+        FAQItem.objects.create(
+            category=category,
+            question=question,
+            answer=answer,
+            order=order
+        )
+        messages.success(request, "FAQ item added successfully.")
+        return redirect('admin_faq_list')
+
+    return render(request, 'admin_faq_form.html', {'faq_item': None})
+
+
+@admin_required
+def admin_faq_edit(request, faq_id):
+    faq_item = get_object_or_404(FAQItem, id=faq_id)
+
+    if request.method == 'POST':
+        faq_item.category = request.POST.get('category')
+        faq_item.question = request.POST.get('question')
+        faq_item.answer = request.POST.get('answer')
+        faq_item.order = request.POST.get('order') or 0
+        faq_item.save()
+        messages.success(request, "FAQ item updated successfully.")
+        return redirect('admin_faq_list')
+
+    return render(request, 'admin_faq_form.html', {'faq_item': faq_item})
+
+
+@admin_required
+def admin_faq_delete(request, faq_id):
+    faq_item = get_object_or_404(FAQItem, id=faq_id)
+    faq_item.delete()
+    messages.success(request, "FAQ item deleted.")
+    return redirect('admin_faq_list')

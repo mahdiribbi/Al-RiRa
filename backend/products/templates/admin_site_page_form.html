@@ -1,0 +1,109 @@
+{% extends 'admin_base.html' %}
+{% block admin_content %}
+
+<div class="form-wrapper">
+    <div class="form-card">
+        <h2 class="fw-bold mb-1 form-title">Edit {{ page.get_page_key_display }}</h2>
+        <p class="text-muted mb-4">This content will be shown to users on the public site.</p>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label class="form-label-custom">Page Title</label>
+                <input type="text" name="title" class="form-control-custom" value="{{ page.title }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label-custom">Content</label>
+                <textarea name="content" class="form-control-custom" rows="14" required>{{ page.content }}</textarea>
+                <small class="text-muted">Leave a blank line between paragraphs. Start a line with "## " to make it a subheading.</small>
+            </div>
+
+            <div class="d-flex gap-3 mt-4">
+                <button type="submit" class="form-submit-btn">Save Changes</button>
+                <a href="{% url 'admin_site_pages_list' %}" class="form-cancel-btn">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .form-wrapper {
+        display: flex;
+        justify-content: center;
+        padding: 20px 0;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        padding: 36px;
+        width: 100%;
+        max-width: 700px;
+        box-shadow: 0 10px 40px rgba(26, 35, 126, 0.1);
+    }
+
+    .form-title {
+        color: var(--primary-color);
+    }
+
+    .form-label-custom {
+        display: block;
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 6px;
+        color: #333;
+    }
+
+    .form-control-custom {
+        width: 100%;
+        padding: 11px 14px;
+        border: 2px solid #eee;
+        border-radius: 10px;
+        font-size: 14.5px;
+        font-family: inherit;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .form-control-custom:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px rgba(255, 111, 0, 0.15);
+    }
+
+    .form-submit-btn {
+        background: linear-gradient(90deg, #ff6f00, #ff8f00);
+        color: white;
+        font-weight: 700;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 28px;
+        font-size: 15px;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .form-submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(255, 111, 0, 0.35);
+    }
+
+    .form-cancel-btn {
+        background: #eee;
+        color: #555;
+        font-weight: 600;
+        border-radius: 10px;
+        padding: 12px 28px;
+        font-size: 15px;
+        text-decoration: none;
+        transition: background 0.2s ease;
+    }
+
+    .form-cancel-btn:hover {
+        background: #e0e0e0;
+        color: #333;
+    }
+</style>
+
+{% endblock %}

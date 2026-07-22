@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load page_filters %}
 
 {% block title %}Privacy Policy - Khorgosh{% endblock %}
 {% block description %}Read Khorgosh's privacy policy to understand how we collect and protect your information.{% endblock %}
@@ -6,21 +7,9 @@
 {% block content %}
 
 <div class="static-page-card">
-    <h1 class="fw-bold mb-4" style="color: var(--primary-color);">Privacy Policy</h1>
+    <h1 class="fw-bold mb-4" style="color: var(--primary-color);">{{ page.title }}</h1>
 
-    <p>At Khorgosh, we value your privacy and are committed to protecting your personal information.</p>
-
-    <h5 class="fw-bold mt-4">Information We Collect</h5>
-    <p>We collect information you provide during account creation and checkout, such as your name, email address, and shipping details, to process your orders effectively.</p>
-
-    <h5 class="fw-bold mt-4">How We Use Your Information</h5>
-    <p>Your information is used solely to process orders, manage your account, and improve our services. We do not sell or share your personal data with third parties without your consent.</p>
-
-    <h5 class="fw-bold mt-4">Data Security</h5>
-    <p>We implement reasonable security measures to protect your data from unauthorized access, alteration, or disclosure.</p>
-
-    <h5 class="fw-bold mt-4">Contact Us</h5>
-    <p>If you have any questions about this Privacy Policy, please contact us at contact@khorgosh.com.</p>
+    {{ page.content|render_page_content }}
 </div>
 
 <style>
